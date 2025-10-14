@@ -136,10 +136,7 @@ class _WelcomePageState extends State<WelcomePage>
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => RegisterPage()),
-                    );
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()),);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.yellow,

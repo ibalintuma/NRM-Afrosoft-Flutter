@@ -102,26 +102,27 @@ void saveAgentInPreference(agent) async {
 }
 
 void savePersonInPreference(person) async {
+  //{id: 9534, user_name: ibalintuma, picture: , email: ibalintuma1@gmail.com, district: Bundibugyo, password: 1234567890, firebase_token: , notification_id: null}
   print("Saving person in preference");
   var preferences = await SharedPreferences.getInstance();
   preferences.setBool("is_user_logged_in", true);
   preferences.setString("user", jsonEncode(person));
-  preferences.setString("user_id", "${person["id"] as int}");
-  preferences.setString("person_id", "${person["id"] as int}");
-  preferences.setString("user_name", person["name"] as String? ?? "");
-  preferences.setString("user_country", person["country"] as String? ?? "");
+  preferences.setString("user_id", "${person["id"]}");
+  preferences.setString("person_id", "${person["id"]}");
+  preferences.setString("user_name", person["user_name"] as String? ?? "");
+  //preferences.setString("user_country", person["country"] as String? ?? "");
   preferences.setString("user_email", person["email"] as String? ?? "");
-  preferences.setString("user_gender", person["gender"] as String? ?? "");
-  preferences.setString("user_phone", person["phone"] as String? ?? "");
+  //preferences.setString("user_gender", person["gender"] as String? ?? "");
+  //preferences.setString("user_phone", person["phone"] as String? ?? "");
   preferences.setString("user_picture", person["picture"] as String? ?? "");
-  preferences.setString("user_bio", person["bio"] as String? ?? "");
-  preferences.setString("user_job", person["job"] as String? ?? "");
-  preferences.setString("user_work_place", person["work_place"] as String? ?? "");
-  preferences.setString("user_subscription_expiry_date", person["subscription_expiry_date"] as String? ?? "");
-  preferences.setDouble("user_profile_completion_percentage",
-      person["profile_completion_percentage"] is String
-          ? double.tryParse(person["profile_completion_percentage"]) ?? 0.0
-          : person["profile_completion_percentage"] as double? ?? 0.0);
+  //preferences.setString("user_bio", person["bio"] as String? ?? "");
+  //preferences.setString("user_job", person["job"] as String? ?? "");
+  //preferences.setString("user_work_place", person["work_place"] as String? ?? "");
+  //preferences.setString("user_subscription_expiry_date", person["subscription_expiry_date"] as String? ?? "");
+  //preferences.setDouble("user_profile_completion_percentage",
+  //    person["profile_completion_percentage"] is String
+  //        ? double.tryParse(person["profile_completion_percentage"]) ?? 0.0
+  //       : person["profile_completion_percentage"] as double? ?? 0.0);
 }
 
 void saveToken(token,token_type) async {

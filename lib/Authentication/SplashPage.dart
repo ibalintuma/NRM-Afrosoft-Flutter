@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nrm_afrosoft_flutter/Authentication/LoginPage.dart';
 import 'package:nrm_afrosoft_flutter/Authentication/WelcomePage.dart';
+import 'package:nrm_afrosoft_flutter/Home/HomePage.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class SplashPage extends StatefulWidget {
   const SplashPage({super.key});
@@ -14,10 +16,7 @@ class _SplashPageState extends State<SplashPage> {
   void initState() {
     super.initState();
     Future.delayed(const Duration(seconds: 5), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => WelcomePage()),
-      );
+      goIn();
     });
   }
 
@@ -87,5 +86,14 @@ class _SplashPageState extends State<SplashPage> {
         ],
       ),
     );
+  }
+
+  Future<void> goIn() async {
+    var prefs = await SharedPreferences.getInstance();
+    if (prefs.getBool("is_user_logged_in") == true)
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => HomePage()),);
+    else
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => WelcomePage()),);
+
   }
 }

@@ -27,6 +27,7 @@ class _RegisterPageState extends State<RegisterPage>
   bool _acceptedTerms = false;
 
   var loadingDistricts = false;
+  var loadingSignUp = false;
   List<dynamic> districts = [];
   dynamic selectedDistrict;
 
@@ -59,16 +60,164 @@ class _RegisterPageState extends State<RegisterPage>
     super.dispose();
   }
 
-  void _signUp() {
-    /*Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => HomePage()),);*/
+  // Email validation
+  bool _isValidEmail(String email) {
+    return RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(email);
+  }
 
+  // Password validation
+  bool _isValidPassword(String password) {
+    return password.length >= 6;
+  }
+
+  // Show error dialog
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Validation Error'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Show success dialog
+  void _showSuccessDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Success'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              _goToLogin();
+            },
+            child: const Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Validate all fields
+  bool _validateFields() {
+    // Check username
+    if (_usernameController.text.trim().isEmpty) {
+      _showErrorDialog('Please enter a username');
+      return false;
+    }
+
+    if (_usernameController.text.trim().length < 3) {
+      _showErrorDialog('Username must be at least 3 characters long');
+      return false;
+    }
+
+    // Check email
+    if (_emailController.text.trim().isEmpty) {
+      _showErrorDialog('Please enter an email address');
+      return false;
+    }
+
+    if (!_isValidEmail(_emailController.text.trim())) {
+      _showErrorDialog('Please enter a valid email address');
+      return false;
+    }
+
+    // Check district
+    if (selectedDistrict == null) {
+      _showErrorDialog('Please select a district');
+      return false;
+    }
+
+    // Check password
+    if (_passwordController.text.isEmpty) {
+      _showErrorDialog('Please enter a password');
+      return false;
+    }
+
+    if (!_isValidPassword(_passwordController.text)) {
+      _showErrorDialog('Password must be at least 6 characters long');
+      return false;
+    }
+
+    // Check confirm password
+    if (_confirmPasswordController.text.isEmpty) {
+      _showErrorDialog('Please confirm your password');
+      return false;
+    }
+
+    if (_passwordController.text != _confirmPasswordController.text) {
+      _showErrorDialog('Passwords do not match');
+      return false;
+    }
+
+    // Check terms acceptance
+    if (!_acceptedTerms) {
+      _showErrorDialog('Please accept the terms and conditions');
+      return false;
+    }
+
+    return true;
+  }
+
+  void _signUp() {
+    // Validate all fields first
+    if (!_validateFields()) {
+      return;
+    }
+
+    // Prepare data
+    String username = _usernameController.text.trim();
+    String email = _emailController.text.trim();
+    String password = _passwordController.text;
+    String district = selectedDistrict['name'] ?? '';
+
+    var persons = [];
+    requestAPI(
+      getApiURL("register_user_new.php"),
+      {
+        "user_name": username,
+        "email": email,
+        "password": password,
+        "district": district,
+        "firebase_token": "", //leave empty for now
+      },
+          (progress) {
+        setState(() {
+          loadingSignUp = progress;
+        });
+      },
+          (response) {
+        print(response); //[{id: 9534, user_name: ibalintuma, picture: , email: ibalintuma1@gmail.com, district: Bundibugyo, password: 1234567890, firebase_token: , notification_id: null}]
+        // Check if registration was successful
+        if (response != null) {
+          persons = response;
+          if ( persons.isNotEmpty){
+            var person = persons.first;
+            savePersonInPreference(person);
+            _showSuccessDialog('Registration successful! Please log in.');
+          } else {
+            _showErrorDialog('Registration failed.');
+          }
+        } else {
+          _showErrorDialog('Registration failed. Please try again.');
+        }
+      }, (error) {
+        _showErrorDialog('An error occurred: $error');
+      },
+    );
   }
 
   void _goToLogin() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => LoginPage()),
-    );
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()),);
   }
 
   @override
@@ -152,6 +301,7 @@ class _RegisterPageState extends State<RegisterPage>
                       // Username
                       TextField(
                         controller: _usernameController,
+                        enabled: !loadingSignUp,
                         decoration: InputDecoration(
                           labelText: 'Username',
                           border: OutlineInputBorder(
@@ -165,6 +315,7 @@ class _RegisterPageState extends State<RegisterPage>
                       // Email
                       TextField(
                         controller: _emailController,
+                        enabled: !loadingSignUp,
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           labelText: 'Email',
@@ -178,14 +329,24 @@ class _RegisterPageState extends State<RegisterPage>
 
                       // District / Location Dropdown or Loader
                       loadingDistricts
-                          ? Center(child: CircularProgressIndicator())
+                          ? Container(
+                        height: 60,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Center(
+                          child: CircularProgressIndicator(),
+                        ),
+                      )
                           : DropdownButtonFormField<dynamic>(
                         decoration: InputDecoration(
                           labelText: 'District / Location',
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          prefixIcon: const Icon(Icons.location_on_outlined),
+                          prefixIcon:
+                          const Icon(Icons.location_on_outlined),
                         ),
                         items: districts
                             .map((district) => DropdownMenuItem<dynamic>(
@@ -194,7 +355,9 @@ class _RegisterPageState extends State<RegisterPage>
                         ))
                             .toList(),
                         value: selectedDistrict,
-                        onChanged: (value) {
+                        onChanged: loadingSignUp
+                            ? null
+                            : (value) {
                           setState(() {
                             selectedDistrict = value;
                           });
@@ -205,6 +368,7 @@ class _RegisterPageState extends State<RegisterPage>
                       // Password
                       TextField(
                         controller: _passwordController,
+                        enabled: !loadingSignUp,
                         obscureText: _obscurePassword,
                         decoration: InputDecoration(
                           labelText: 'Password',
@@ -231,6 +395,7 @@ class _RegisterPageState extends State<RegisterPage>
                       // Confirm Password
                       TextField(
                         controller: _confirmPasswordController,
+                        enabled: !loadingSignUp,
                         obscureText: _obscureConfirmPassword,
                         decoration: InputDecoration(
                           labelText: 'Confirm Password',
@@ -284,7 +449,9 @@ class _RegisterPageState extends State<RegisterPage>
                         children: [
                           Checkbox(
                             value: _acceptedTerms,
-                            onChanged: (value) {
+                            onChanged: loadingSignUp
+                                ? null
+                                : (value) {
                               setState(() {
                                 _acceptedTerms = value ?? false;
                               });
@@ -300,9 +467,10 @@ class _RegisterPageState extends State<RegisterPage>
                       ),
                       const SizedBox(height: 16),
 
-                      // Sign Up Button
+                      // Sign Up Button with loader
                       ElevatedButton(
-                        onPressed: _acceptedTerms ? _signUp : null,
+                        onPressed:
+                        (_acceptedTerms && !loadingSignUp) ? _signUp : null,
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.black,
                           foregroundColor: Colors.yellow,
@@ -312,7 +480,17 @@ class _RegisterPageState extends State<RegisterPage>
                             side: const BorderSide(color: Colors.yellow),
                           ),
                         ),
-                        child: const Text(
+                        child: loadingSignUp
+                            ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                                Colors.yellow),
+                          ),
+                        )
+                            : const Text(
                           'Sign Up',
                           style: TextStyle(
                             fontSize: 16,
@@ -334,7 +512,7 @@ class _RegisterPageState extends State<RegisterPage>
                       // Login button
                       Center(
                         child: TextButton(
-                          onPressed: _goToLogin,
+                          onPressed: loadingSignUp ? null : _goToLogin,
                           child: const Text(
                             'Login',
                             style: TextStyle(
@@ -351,6 +529,30 @@ class _RegisterPageState extends State<RegisterPage>
               ),
             ],
           ),
+
+          // Full-screen loader overlay
+          if (loadingSignUp)
+            Container(
+              color: Colors.black.withOpacity(0.5),
+              child: const Center(
+                child: Card(
+                  child: Padding(
+                    padding: EdgeInsets.all(24.0),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        CircularProgressIndicator(),
+                        SizedBox(height: 16),
+                        Text(
+                          'Creating your account...',
+                          style: TextStyle(fontSize: 16),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
         ],
       ),
     );
@@ -358,18 +560,25 @@ class _RegisterPageState extends State<RegisterPage>
 
   //[{id: 1, name: Abim, latitude: 2.7081076, longitude: 33.6511208},
   void getDistricts() {
-    requestAPI(getApiURL("retrieve_all_districts.php"), {"":""}, (progress){
-      setState(() {
-        loadingDistricts = progress;
-      });
-    }, (response){
-      setState(() {
-        districts = response;
-        if (districts.isNotEmpty) {
-          selectedDistrict = districts[0];
-        }
-      });
-    }, (error){});
+    requestAPI(
+      getApiURL("retrieve_all_districts.php"),
+      {"": ""},
+          (progress) {
+        setState(() {
+          loadingDistricts = progress;
+        });
+      },
+          (response) {
+        setState(() {
+          districts = response;
+          if (districts.isNotEmpty) {
+            selectedDistrict = districts[0];
+          }
+        });
+      },
+          (error) {
+        _showErrorDialog('Failed to load districts: $error');
+      },
+    );
   }
-
 }
