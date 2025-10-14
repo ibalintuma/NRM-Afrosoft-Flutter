@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:nrm_afrosoft_flutter/Authentication/LoginPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/HomePage.dart';
+import 'package:nrm_afrosoft_flutter/Utils/Constants.dart';
+import 'package:nrm_afrosoft_flutter/Utils/Helper.dart';
 
 class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
@@ -16,14 +18,17 @@ class _RegisterPageState extends State<RegisterPage>
 
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _districtController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  TextEditingController();
 
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
   bool _acceptedTerms = false;
+
+  var loadingDistricts = false;
+  List<dynamic> districts = [];
+  dynamic selectedDistrict;
 
   @override
   void initState() {
@@ -39,6 +44,9 @@ class _RegisterPageState extends State<RegisterPage>
       begin: 1.0,
       end: 1.05,
     ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
+
+    //get districts
+    getDistricts();
   }
 
   @override
@@ -46,17 +54,14 @@ class _RegisterPageState extends State<RegisterPage>
     _controller.dispose();
     _usernameController.dispose();
     _emailController.dispose();
-    _districtController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
     super.dispose();
   }
 
   void _signUp() {
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => HomePage()),
-    );
+    /*Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => HomePage()),);*/
+
   }
 
   void _goToLogin() {
@@ -68,8 +73,6 @@ class _RegisterPageState extends State<RegisterPage>
 
   @override
   Widget build(BuildContext context) {
-    // final size = MediaQuery.of(context).size;
-
     return Scaffold(
       body: Stack(
         fit: StackFit.expand,
@@ -173,9 +176,10 @@ class _RegisterPageState extends State<RegisterPage>
                       ),
                       const SizedBox(height: 16),
 
-                      // District / Location
-                      TextField(
-                        controller: _districtController,
+                      // District / Location Dropdown or Loader
+                      loadingDistricts
+                          ? Center(child: CircularProgressIndicator())
+                          : DropdownButtonFormField<dynamic>(
                         decoration: InputDecoration(
                           labelText: 'District / Location',
                           border: OutlineInputBorder(
@@ -183,6 +187,18 @@ class _RegisterPageState extends State<RegisterPage>
                           ),
                           prefixIcon: const Icon(Icons.location_on_outlined),
                         ),
+                        items: districts
+                            .map((district) => DropdownMenuItem<dynamic>(
+                          value: district,
+                          child: Text(district['name']),
+                        ))
+                            .toList(),
+                        value: selectedDistrict,
+                        onChanged: (value) {
+                          setState(() {
+                            selectedDistrict = value;
+                          });
+                        },
                       ),
                       const SizedBox(height: 16),
 
@@ -231,7 +247,7 @@ class _RegisterPageState extends State<RegisterPage>
                             onPressed: () {
                               setState(() {
                                 _obscureConfirmPassword =
-                                    !_obscureConfirmPassword;
+                                !_obscureConfirmPassword;
                               });
                             },
                           ),
@@ -339,4 +355,21 @@ class _RegisterPageState extends State<RegisterPage>
       ),
     );
   }
+
+  //[{id: 1, name: Abim, latitude: 2.7081076, longitude: 33.6511208},
+  void getDistricts() {
+    requestAPI(getApiURL("retrieve_all_districts.php"), {"":""}, (progress){
+      setState(() {
+        loadingDistricts = progress;
+      });
+    }, (response){
+      setState(() {
+        districts = response;
+        if (districts.isNotEmpty) {
+          selectedDistrict = districts[0];
+        }
+      });
+    }, (error){});
+  }
+
 }
