@@ -14,3 +14,6 @@ var APPLE_RESTRICTED_FEATURE = false; // Hide Apple features like iCloud, Sign i
   String getApiURL( String path) {
     return "$MAIN_LINK$path";
   }
+  String getImageURL( String folder, String name) {
+    return "$MAIN_LINK$folder/$name";
+  }

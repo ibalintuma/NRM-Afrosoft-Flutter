@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:nrm_afrosoft_flutter/Utils/Constants.dart';
+import 'package:nrm_afrosoft_flutter/Utils/Helper.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import 'TabWidgets/AboutNRMWidget.dart';
@@ -18,7 +20,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
-  bool _showImages = false;
+  bool _showImages = true;
 
   final List<String> carouselImages = [
     'assets/drawable/launch_two.jpg',
@@ -58,6 +60,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _tabController = TabController(length: tabLabels.length, vsync: this);
+    getCampaignPosters();
+  }
+
+  var _loadingPosters = false;
+  var _posters = [];
+  void getCampaignPosters() {
+    //requestAPI(getApiURL("retrieve_campaign_posts.php"), {"":""}, (loading){}, (response){}, (error){}, method: "GET");
+    requestAPI(getApiURL("retrieve_campaign_posts.php"), {"":""}, (loading){}, (response){
+      setState(() {
+        _posters = response;
+      });
+    }, (error){}, method: "GET");
   }
 
   @override
@@ -220,9 +234,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text(
-                        'NRM Flag Bearers',
-                        style: TextStyle(
+                      Text(
+                        "NRM Flag Bearers ${_posters.length}",
+                        style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
@@ -263,27 +277,25 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   if (_showImages)
                     SizedBox(
                       height: 100, // adjust as needed
-                      child: ListView(
+                      child:
+                      _loadingPosters ? const Center(child: CircularProgressIndicator()) :
+                      ListView(
+                        padding: EdgeInsets.zero,
                         scrollDirection: Axis.horizontal,
-                        children: [
-                          Image.asset(
-                            'assets/drawable/todwong_small.jpg',
-                            width: 100,
-                            fit: BoxFit.cover,
-                          ),
-                          const SizedBox(width: 8),
-                          Image.asset(
-                            'assets/drawable/todwong_small.jpg',
-                            width: 100,
-                            fit: BoxFit.cover,
-                          ),
-                          const SizedBox(width: 8),
-                          Image.asset(
-                            'assets/drawable/todwong_small.jpg',
-                            width: 100,
-                            fit: BoxFit.cover,
-                          ),
-                        ],
+                        children: _posters.map<Widget>((poster) {
+                          return Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Image.network(
+                                //'assets/drawable/todwong_small.jpg',
+                                getImageURL("CampaignPosters",poster['poster']),
+                                width: 100,
+                                fit: BoxFit.cover,
+                              ),
+                              const SizedBox(width: 8),
+                            ],
+                          );
+                        }).toList(),
                       ),
                     ),
 
