@@ -22,14 +22,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   bool _showImages = true;
 
-  final List<String> carouselImages = [
-    'assets/drawable/launch_two.jpg',
-    'assets/drawable/launch_six.jpeg',
-    'assets/drawable/launch_five.jpeg',
-    'assets/drawable/launch_one.jpg',
-    'assets/drawable/launch_three.jpg',
-    'assets/drawable/launch_four.jpg',
-  ];
+  var carouselImages = [];
 
   int activeIndex = 0;
   late TabController _tabController;
@@ -61,13 +54,18 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     super.initState();
     _tabController = TabController(length: tabLabels.length, vsync: this);
     getCampaignPosters();
+    getSliderImages();
   }
 
   var _loadingPosters = false;
   var _posters = [];
   void getCampaignPosters() {
     //requestAPI(getApiURL("retrieve_campaign_posts.php"), {"":""}, (loading){}, (response){}, (error){}, method: "GET");
-    requestAPI(getApiURL("retrieve_campaign_posts.php"), {"":""}, (loading){}, (response){
+    requestAPI(getApiURL("retrieve_campaign_posts.php"), {"":""}, (loading){
+      setState(() {
+        _loadingPosters = loading;
+      });
+    }, (response){
       setState(() {
         _posters = response;
       });
@@ -158,11 +156,13 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               height: 250,
               child: Stack(
                 children: [
+
+                  _loadingSliderImages ? const Center(child: CircularProgressIndicator()) :
                   CarouselSlider.builder(
                     itemCount: carouselImages.length,
                     itemBuilder: (context, index, realIndex) {
                       final image = carouselImages[index];
-                      return Image.asset(
+                      return Image.network(
                         image,
                         fit: BoxFit.cover,
                         width: double.infinity,
@@ -179,6 +179,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       },
                     ),
                   ),
+
                   Positioned(
                     bottom: 16,
                     left: 0,
@@ -235,7 +236,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "NRM Flag Bearers ${_posters.length}",
+                        "NRM Flag Bearers (${_posters.length})",
                         style: const TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
@@ -416,6 +417,21 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         ),
       ],
     );
+  }
+
+  var _loadingSliderImages = false;
+  var _sliderImages = [];
+  void getSliderImages() {
+    requestAPI(getApiURL("api/slide_banners"), {"":""}, (loading){
+      setState(() {
+        _loadingSliderImages = loading;
+      });
+    }, (response){
+      setState(() {
+        _sliderImages = response["data"];
+        carouselImages = _sliderImages.map<String>((img) => img['image']).toList();
+      });
+    }, (error){}, method: "GET");
   }
 }
 
