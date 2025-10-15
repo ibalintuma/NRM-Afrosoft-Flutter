@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../Utils/Constants.dart';
+import '../../Utils/Helper.dart';
+
 class HomeTabWidget extends StatefulWidget {
   const HomeTabWidget({super.key});
 
@@ -9,23 +12,29 @@ class HomeTabWidget extends StatefulWidget {
 
 class _HomeTabWidgetState extends State<HomeTabWidget> {
   // Sample news data (can later come from your API)
-  final List<Map<String, String>> latestNews = [
-    {
-      "image": "assets/drawable/launch_one.jpg",
-      "title": "President launches new agricultural initiative",
-      "date": "Oct 10, 2025",
-    },
-    {
-      "image": "assets/drawable/launch_two.jpg",
-      "title": "NRM Youth Conference held in Kampala",
-      "date": "Oct 12, 2025",
-    },
-    {
-      "image": "assets/drawable/launch_three.jpg",
-      "title": "Government unveils new infrastructure projects",
-      "date": "Oct 14, 2025",
-    },
-  ];
+
+  @override
+  void initState() {
+    super.initState();
+    getNews();
+  }
+
+  var _loadingNews = false;
+  var _news = [];
+  void getNews() {
+    //requestAPI(getApiURL("retrieve_campaign_posts.php"), {"":""}, (loading){}, (response){}, (error){}, method: "GET");
+    requestAPI(getApiURL("retrieve_all_news.php"), {"":""}, (loading){
+      setState(() {
+        _loadingNews = loading;
+      });
+    }, (response){
+      print("_NEWS");
+      setState(() {
+        _news = response;
+      });
+      print(_news);
+    }, (error){}, method: "GET");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,9 +56,10 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
             height: 220,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              itemCount: latestNews.length,
+              itemCount: _news.length,
               itemBuilder: (context, index) {
-                final news = latestNews[index];
+                final news = _news[index];
+                //image, body, headline, date
                 return Padding(
                   padding: const EdgeInsets.only(right: 12),
                   child: Stack(
@@ -57,8 +67,8 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
                       // News Image
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
-                        child: Image.asset(
-                          news["image"]!,
+                        child: Image.network(
+                          getImageURL("NewsImages", news["image"]),
                           height: 220,
                           width: 300,
                           fit: BoxFit.cover,
@@ -109,7 +119,7 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
                               // Description
                               Expanded(
                                 child: Text(
-                                  news["title"]!,
+                          news["headline"],
                                   style: const TextStyle(
                                     color: Colors.white,
                                     fontSize: 14,
@@ -122,7 +132,8 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
 
                               // Date (bottom right)
                               Text(
-                                news["date"]!,
+                formatLaravelTime(news["date"])
+                                ,
                                 style: const TextStyle(
                                   color: Color(0xFFFFD401),
                                   fontSize: 12,

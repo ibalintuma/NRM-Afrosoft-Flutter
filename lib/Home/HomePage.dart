@@ -60,7 +60,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   var _loadingPosters = false;
   var _posters = [];
   void getCampaignPosters() {
-    //requestAPI(getApiURL("retrieve_campaign_posts.php"), {"":""}, (loading){}, (response){}, (error){}, method: "GET");
+
     requestAPI(getApiURL("retrieve_campaign_posts.php"), {"":""}, (loading){
       setState(() {
         _loadingPosters = loading;
