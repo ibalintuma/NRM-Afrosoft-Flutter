@@ -69,6 +69,9 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      floatingActionButton: _buildFabMenu(),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
       // ✅ Fixed AppBar
       appBar: AppBar(
         backgroundColor: const Color(0xFFFFD401),
@@ -339,6 +342,67 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildFabMenu() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.end,
+      children: [
+        // 🟨 Support Center button
+        Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          child: FloatingActionButton.extended(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+              side: const BorderSide(
+                color: Colors.black, // border color
+                width: 2, // border thickness
+              ),
+            ),
+            heroTag: 'support_center',
+            onPressed: () {
+              // Navigate to Support Center
+            },
+            backgroundColor: Color(0xFFFFD401),
+            icon: const Icon(Icons.support_agent, color: Colors.black),
+            label: const Text(
+              'SUPPORT CENTER',
+              style: TextStyle(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 16),
+        // 🟩 Chat button
+        Container(
+          margin: const EdgeInsets.only(bottom: 10),
+          child: FloatingActionButton.extended(
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
+              side: const BorderSide(
+                color: Color(0xFFFFD401), // border color
+                width: 2, // border thickness
+              ),
+            ),
+            heroTag: 'chat',
+            onPressed: () {
+              // Open chat screen
+            },
+            backgroundColor: Colors.black,
+            icon: const Icon(Icons.chat, color: Color(0xFFFFD401)),
+            label: const Text(
+              'CHAT',
+              style: TextStyle(
+                color: Color(0xFFFFD401),
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

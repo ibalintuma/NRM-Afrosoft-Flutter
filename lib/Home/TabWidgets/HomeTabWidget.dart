@@ -264,6 +264,233 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
               ),
             ],
           ),
+
+          const SizedBox(height: 16),
+
+          // 🔶 Second Row with Background Images
+          Row(
+            children: [
+              // Left: Background Image 1
+              Expanded(
+                child: Stack(
+                  children: [
+                    Container(
+                      height: 140,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        image: const DecorationImage(
+                          image: AssetImage(
+                            'assets/drawable/manifesto_image.PNG',
+                          ),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              // Right: Background Image 2
+              Expanded(
+                child: Stack(
+                  children: [
+                    Container(
+                      height: 140,
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        image: const DecorationImage(
+                          image: AssetImage('assets/drawable/leadership.jpg'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // 🔶 Third Row with RDCs and NRM Candidates
+          Row(
+            children: [
+              // Left: RDCs and DRDCs
+              Expanded(
+                child: Container(
+                  height: 140,
+                  decoration: BoxDecoration(
+                    color: Colors.grey[800],
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/drawable/nrm_logo.png', // 👈 your NRM logo
+                        width: 50,
+                        height: 50,
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        "RDC's and DRDC's",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(width: 12),
+
+              // Right: NRM Candidates
+              Expanded(
+                child: Container(
+                  height: 140,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFFFD401),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/drawable/nrm_logo.png', // 👈 same logo
+                        width: 50,
+                        height: 50,
+                      ),
+                      const SizedBox(height: 8),
+                      const Text(
+                        'NRM Candidates',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+
+          // 🌍 Near You Section
+          Container(
+            height: 140,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              image: const DecorationImage(
+                image: AssetImage(
+                  'assets/drawable/near_you.jpg',
+                ), // 👈 background image
+                fit: BoxFit.cover,
+              ),
+            ),
+            child: Stack(
+              alignment: Alignment.center,
+              children: [
+                // Semi-transparent overlay for clarity
+                Container(
+                  decoration: BoxDecoration(
+                    color: Colors.black.withOpacity(0.4),
+                    borderRadius: BorderRadius.circular(16),
+                  ),
+                ),
+
+                // Icon + Text vertically aligned
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xFFFFD401), // Yellow background for icon
+                      ),
+                      child: const Icon(
+                        Icons.location_on,
+                        color: Colors.black,
+                        size: 32,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    const Text(
+                      'Near You',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          const SizedBox(height: 16),
+
+          // 🟨 Two Containers Row
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              // First container
+              Expanded(
+                child: Container(
+                  height: 100,
+                  margin: const EdgeInsets.only(right: 8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    image: const DecorationImage(
+                      image: AssetImage(
+                        'assets/drawable/road_map.png',
+                      ), // 👈 replace with your image
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+
+              // Second container
+              Expanded(
+                child: Container(
+                  height: 100,
+                  margin: const EdgeInsets.only(left: 8),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    image: const DecorationImage(
+                      image: AssetImage(
+                        'assets/drawable/contact.jpg',
+                      ), // 👈 replace with your image
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 16),
+
+          // 🟩 Last Full-Width Container
+          Container(
+            height: 100,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(16),
+              image: const DecorationImage(
+                image: AssetImage(
+                  'assets/drawable/web_logo.png',
+                ), // 👈 replace with your image
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
         ],
       ),
     );

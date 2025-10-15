@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:async';
 
 import 'package:nrm_afrosoft_flutter/Authentication/LoginPage.dart';
+import 'package:nrm_afrosoft_flutter/Home/HomePage.dart';
 
 import 'RegisterPage.dart';
 
@@ -40,7 +41,10 @@ class _WelcomePageState extends State<WelcomePage>
   }
 
   void _skipToNextPage() {
-    Navigator.pushReplacementNamed(context, '/home');
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => HomePage()),
+    );
   }
 
   @override
@@ -136,7 +140,10 @@ class _WelcomePageState extends State<WelcomePage>
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => LoginPage()),);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => LoginPage()),
+                    );
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.yellow,
