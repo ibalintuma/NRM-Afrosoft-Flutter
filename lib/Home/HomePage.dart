@@ -60,16 +60,22 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   var _loadingPosters = false;
   var _posters = [];
   void getCampaignPosters() {
-
-    requestAPI(getApiURL("retrieve_campaign_posts.php"), {"":""}, (loading){
-      setState(() {
-        _loadingPosters = loading;
-      });
-    }, (response){
-      setState(() {
-        _posters = response;
-      });
-    }, (error){}, method: "GET");
+    requestAPI(
+      getApiURL("retrieve_campaign_posts.php"),
+      {"": ""},
+      (loading) {
+        setState(() {
+          _loadingPosters = loading;
+        });
+      },
+      (response) {
+        setState(() {
+          _posters = response;
+        });
+      },
+      (error) {},
+      method: "GET",
+    );
   }
 
   @override
@@ -156,29 +162,29 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               height: 250,
               child: Stack(
                 children: [
-
-                  _loadingSliderImages ? const Center(child: CircularProgressIndicator()) :
-                  CarouselSlider.builder(
-                    itemCount: carouselImages.length,
-                    itemBuilder: (context, index, realIndex) {
-                      final image = carouselImages[index];
-                      return Image.network(
-                        image,
-                        fit: BoxFit.cover,
-                        width: double.infinity,
-                      );
-                    },
-                    options: CarouselOptions(
-                      height: double.infinity,
-                      viewportFraction: 1.0,
-                      autoPlay: true,
-                      onPageChanged: (index, reason) {
-                        setState(() {
-                          activeIndex = index;
-                        });
-                      },
-                    ),
-                  ),
+                  _loadingSliderImages
+                      ? const Center(child: CircularProgressIndicator())
+                      : CarouselSlider.builder(
+                        itemCount: carouselImages.length,
+                        itemBuilder: (context, index, realIndex) {
+                          final image = carouselImages[index];
+                          return Image.network(
+                            image,
+                            fit: BoxFit.cover,
+                            width: double.infinity,
+                          );
+                        },
+                        options: CarouselOptions(
+                          height: double.infinity,
+                          viewportFraction: 1.0,
+                          autoPlay: true,
+                          onPageChanged: (index, reason) {
+                            setState(() {
+                              activeIndex = index;
+                            });
+                          },
+                        ),
+                      ),
 
                   Positioned(
                     bottom: 16,
@@ -279,25 +285,30 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     SizedBox(
                       height: 100, // adjust as needed
                       child:
-                      _loadingPosters ? const Center(child: CircularProgressIndicator()) :
-                      ListView(
-                        padding: EdgeInsets.zero,
-                        scrollDirection: Axis.horizontal,
-                        children: _posters.map<Widget>((poster) {
-                          return Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Image.network(
-                                //'assets/drawable/todwong_small.jpg',
-                                getImageURL("CampaignPosters",poster['poster']),
-                                width: 100,
-                                fit: BoxFit.cover,
+                          _loadingPosters
+                              ? const Center(child: CircularProgressIndicator())
+                              : ListView(
+                                padding: EdgeInsets.zero,
+                                scrollDirection: Axis.horizontal,
+                                children:
+                                    _posters.map<Widget>((poster) {
+                                      return Row(
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Image.network(
+                                            //'assets/drawable/todwong_small.jpg',
+                                            getImageURL(
+                                              "CampaignPosters",
+                                              poster['poster'],
+                                            ),
+                                            width: 100,
+                                            fit: BoxFit.cover,
+                                          ),
+                                          const SizedBox(width: 8),
+                                        ],
+                                      );
+                                    }).toList(),
                               ),
-                              const SizedBox(width: 8),
-                            ],
-                          );
-                        }).toList(),
-                      ),
                     ),
 
                   const SizedBox(height: 12),
@@ -364,10 +375,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       children: [
         // 🟨 Support Center button
         Container(
-          margin: const EdgeInsets.only(bottom: 10),
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: EdgeInsets.symmetric(horizontal: 4),
           child: FloatingActionButton.extended(
+            extendedPadding: EdgeInsets.symmetric(horizontal: 19, vertical: 5),
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(30),
               side: const BorderSide(
                 color: Colors.black, // border color
                 width: 2, // border thickness
@@ -388,7 +401,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             ),
           ),
         ),
-        const SizedBox(width: 16),
+        const SizedBox(width: 110),
         // 🟩 Chat button
         Container(
           margin: const EdgeInsets.only(bottom: 10),
@@ -422,16 +435,24 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
   var _loadingSliderImages = false;
   var _sliderImages = [];
   void getSliderImages() {
-    requestAPI(getApiURL("api/slide_banners"), {"":""}, (loading){
-      setState(() {
-        _loadingSliderImages = loading;
-      });
-    }, (response){
-      setState(() {
-        _sliderImages = response["data"];
-        carouselImages = _sliderImages.map<String>((img) => img['image']).toList();
-      });
-    }, (error){}, method: "GET");
+    requestAPI(
+      getApiURL("api/slide_banners"),
+      {"": ""},
+      (loading) {
+        setState(() {
+          _loadingSliderImages = loading;
+        });
+      },
+      (response) {
+        setState(() {
+          _sliderImages = response["data"];
+          carouselImages =
+              _sliderImages.map<String>((img) => img['image']).toList();
+        });
+      },
+      (error) {},
+      method: "GET",
+    );
   }
 }
 
