@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nrm_afrosoft_flutter/Community/CreatePost.dart';
-import 'package:video_player/video_player.dart';
+import 'package:nrm_afrosoft_flutter/Community/video_player_widget.dart';
 
 import '../Utils/Constants.dart';
 import '../Utils/Helper.dart';
@@ -203,7 +203,7 @@ class _PostPageState extends State<PostPage> {
                         ),
                       ),
                     if (post["video"] != null && post["video"]!.isNotEmpty)
-                      _VideoPlayerWidget(
+                      VideoPlayerWidget(
                         videoUrl: getImageURL("CommunityPostFiles", post["video"]),
                       ),
                   ],
@@ -296,88 +296,3 @@ class _PostPageState extends State<PostPage> {
 }
 
 
-
-class _VideoPlayerWidget extends StatefulWidget {
-  final String videoUrl;
-
-  const _VideoPlayerWidget({required this.videoUrl});
-
-  @override
-  State<_VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
-}
-
-class _VideoPlayerWidgetState extends State<_VideoPlayerWidget> {
-  VideoPlayerController? _controller;
-  bool _isPlaying = false;
-
-  @override
-  void dispose() {
-    _controller?.dispose();
-    super.dispose();
-  }
-
-  void _initializeAndPlay() {
-    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
-      ..initialize().then((_) {
-        setState(() {
-          _isPlaying = true;
-        });
-        _controller!.play();
-      });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (!_isPlaying) {
-      return GestureDetector(
-        onTap: _initializeAndPlay,
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: Stack(
-            alignment: Alignment.center,
-            children: [
-              Container(
-                height: 200,
-                color: Colors.black12,
-                child: const Center(
-                  child: Icon(Icons.videocam, size: 50, color: Colors.grey),
-                ),
-              ),
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.black54,
-                  shape: BoxShape.circle,
-                ),
-                padding: const EdgeInsets.all(12),
-                child: const Icon(
-                  Icons.play_arrow,
-                  size: 40,
-                  color: Colors.white,
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    }
-
-    return _controller!.value.isInitialized
-        ? ClipRRect(
-      borderRadius: BorderRadius.circular(12),
-      child: AspectRatio(
-        aspectRatio: _controller!.value.aspectRatio,
-        child: Stack(
-          alignment: Alignment.bottomCenter,
-          children: [
-            VideoPlayer(_controller!),
-            VideoProgressIndicator(_controller!, allowScrubbing: true),
-          ],
-        ),
-      ),
-    )
-        : const SizedBox(
-      height: 200,
-      child: Center(child: CircularProgressIndicator()),
-    );
-  }
-}
