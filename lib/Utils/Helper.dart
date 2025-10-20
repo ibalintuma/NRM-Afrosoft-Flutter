@@ -12,6 +12,7 @@ import 'package:loading_animation_widget/loading_animation_widget.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart';
 
 var DOMAIN  = "https://shule.artytechcreators.com/";
 var APP_URL_BASE  = "https://shule.artytechcreators.com/api/";
@@ -901,4 +902,10 @@ Widget noContentWidget(String item,) {
       ),
     ),
   );
+}
+
+
+customLog(dynamic data){
+  var logger = Logger();
+  logger.d( data );
 }
