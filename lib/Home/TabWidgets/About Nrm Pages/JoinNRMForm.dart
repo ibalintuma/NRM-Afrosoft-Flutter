@@ -270,22 +270,9 @@ class _JoinNRMFormState extends State<JoinNRMForm> {
               DropdownButtonFormField<String>(
                 value: _selectedPoliticalParty,
                 items:
-                    [
-                          'People Power',
-                          'Democratic Party',
-                          'Forum for Democratic Change',
-                          'Justice Forum',
-                          'Uganda People\'s Congress',
-                          'Social Democratic Party',
-                          'Conservative Party',
-                          'Federal Democratic Party',
-                          'Uganda People\'s Movement',
-                          'People\'s Development Party',
-                          'Uganda Federal Alliance',
-                          'People\'s Reform Party',
-                          'Alliance for National Transformation',
-                          'National Unity Platform',
-                          'Labour Party',
+                    ["People Power", "Democratic Party", "Forum for Democratic Change", "Conservative Party",
+                      "People's Development Party", "Alliance for National Transformation", "Federal Democratic Party", "Uganda People's Movement",
+                      "Justice Forum", "Labour Party", "Uganda People's Congress", "Uganda Federal Alliance"
                         ]
                         .map((p) => DropdownMenuItem(value: p, child: Text(p)))
                         .toList(),
