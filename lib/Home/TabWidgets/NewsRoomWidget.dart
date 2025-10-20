@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../Utils/Constants.dart';
+import '../../Utils/Helper.dart';
+
 class NewsRoomWidget extends StatefulWidget {
   const NewsRoomWidget({super.key});
 
@@ -8,36 +11,41 @@ class NewsRoomWidget extends StatefulWidget {
 }
 
 class _NewsRoomWidgetState extends State<NewsRoomWidget> {
-  final List<Map<String, String>> demoNews = [
-    {
-      "title": "President Launches New Development Program",
-      "date": "October 10, 2025",
-      "image": "assets/drawable/sample_news_image.jpg",
-    },
-    {
-      "title": "NRM Youth League Holds National Conference",
-      "date": "October 8, 2025",
-      "image": "assets/drawable/sample_news_image.jpg",
-    },
-    {
-      "title": "Farmers Empowered with Modern Equipment",
-      "date": "October 6, 2025",
-      "image": "assets/drawable/sample_news_image.jpg",
-    },
-    {
-      "title": "NRM Leaders Tour Eastern Uganda",
-      "date": "October 4, 2025",
-      "image": "assets/drawable/sample_news_image.jpg",
-    },
-  ];
+
+
+  @override
+  void initState() {
+    super.initState();
+    getNews();
+  }
+
+  var _loadingNews = false;
+  var _news = [];
+  void getNews() {
+    //requestAPI(getApiURL("retrieve_campaign_posts.php"), {"":""}, (loading){}, (response){}, (error){}, method: "GET");
+    requestAPI(getApiURL("retrieve_all_news.php"), {"":""}, (loading){
+      setState(() {
+        _loadingNews = loading;
+      });
+    }, (response){
+      print("_NEWS");
+      setState(() {
+        _news = response;
+      });
+      print(_news);
+    }, (error){}, method: "GET");
+  }
+
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(12),
-      child: Column(
-        children: List.generate(demoNews.length, (index) {
-          final news = demoNews[index];
+      child:
+          _loadingNews ? bossBaseLoader() :
+      Column(
+        children: List.generate(_news.length, (index) {
+          final news = _news[index];
           return Column(
             children: [
               Container(
@@ -55,7 +63,7 @@ class _NewsRoomWidgetState extends State<NewsRoomWidget> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            news["title"]!,
+                            news["headline"],
                             style: const TextStyle(
                               fontWeight: FontWeight.bold,
                               fontSize: 16,
@@ -63,7 +71,7 @@ class _NewsRoomWidgetState extends State<NewsRoomWidget> {
                           ),
                           const SizedBox(height: 6),
                           Text(
-                            news["date"]!,
+                            formatLaravelTime(news["date"]),
                             style: const TextStyle(
                               color: Colors.grey,
                               fontSize: 13,
@@ -91,8 +99,8 @@ class _NewsRoomWidgetState extends State<NewsRoomWidget> {
                     // Right side: image
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
-                        news["image"]!,
+                      child: Image.network(
+                        getImageURL("NewsImages", news["image"]),
                         width: 100,
                         height: 80,
                         fit: BoxFit.cover,
@@ -101,7 +109,7 @@ class _NewsRoomWidgetState extends State<NewsRoomWidget> {
                   ],
                 ),
               ),
-              if (index != demoNews.length - 1)
+              if (index != _news.length - 1)
                 const Divider(color: Colors.grey, thickness: 0.5),
             ],
           );

@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
         '/aboutUs': (context) => const AboutUsPage(),
         '/constitution': (context) => ConstitutionPage(),
         '/partyStructure': (context) => const PartyStructurePage(),
-        '/documents': (context) => const DocumentsPage(),
+        '/documents': (context) => DocumentsPage(),
         '/history': (context) => const HistoryPage(),
         '/gallery': (context) => const GalleryPage(),
         '/privacyPolicy': (context) => const PrivacyPolicyPage(),
