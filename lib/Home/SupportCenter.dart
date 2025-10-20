@@ -282,6 +282,7 @@ class _SupportCenterState extends State<SupportCenter> {
                               ),
                             ],
                           ),
+
                           const SizedBox(height: 20),
 
                           // Row 2

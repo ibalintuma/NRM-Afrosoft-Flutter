@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nrm_afrosoft_flutter/Community/BloggersPage.dart';
+import 'package:nrm_afrosoft_flutter/Community/RadioStationsPage.dart';
+import 'package:nrm_afrosoft_flutter/Community/TVStationsPage.dart';
 
 class MediaTeamPage extends StatefulWidget {
   const MediaTeamPage({super.key});
@@ -47,11 +49,7 @@ class _MediaTeamPageState extends State<MediaTeamPage>
       ),
       body: TabBarView(
         controller: _tabController,
-        children: const [
-          BloggersPage(),
-          Center(child: Text("TV Stations content will go here")),
-          Center(child: Text("Radio Stations content will go here")),
-        ],
+        children: const [BloggersPage(), TVStations(), RadioStations()],
       ),
     );
   }
