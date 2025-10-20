@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:nrm_afrosoft_flutter/Community/CommunityPage.dart';
+import 'package:nrm_afrosoft_flutter/Home/SupportCenter.dart';
 import 'package:nrm_afrosoft_flutter/Utils/Constants.dart';
 import 'package:nrm_afrosoft_flutter/Utils/Helper.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -389,6 +391,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             heroTag: 'support_center',
             onPressed: () {
               // Navigate to Support Center
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SupportCenter()),
+              );
             },
             backgroundColor: Color(0xFFFFD401),
             icon: const Icon(Icons.support_agent, color: Colors.black),
@@ -416,6 +422,10 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             heroTag: 'chat',
             onPressed: () {
               // Open chat screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CommunityPage()),
+              );
             },
             backgroundColor: Colors.black,
             icon: const Icon(Icons.chat, color: Color(0xFFFFD401)),
