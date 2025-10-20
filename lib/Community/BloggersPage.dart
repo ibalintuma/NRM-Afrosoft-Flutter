@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../Utils/Constants.dart';
+import '../Utils/Helper.dart';
+
 class BloggersPage extends StatefulWidget {
   const BloggersPage({super.key});
 
@@ -10,10 +13,37 @@ class BloggersPage extends StatefulWidget {
 
 class _BloggersPageState extends State<BloggersPage> {
   // Demo data (no image paths per blogger)
-  final List<Map<String, dynamic>> bloggers = [
-    {'name': 'Allan Hirya', 'location': 'Kampala', 'phone': '+256701234567'},
-    {'name': 'Frank Sebuma', 'location': 'Mbarara', 'phone': '+256779876543'},
-  ];
+
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    getBlogger();
+  }
+
+
+  var _loadingBlogger = false;
+  var _bloggers = [];
+  void getBlogger() {
+    requestAPI(
+      getApiURL("get_media_team.php"),
+      {"": ""},
+          (loading) {
+        setState(() {
+          _loadingBlogger = loading;
+        });
+      },
+          (response) {
+        setState(() {
+          _bloggers = response;
+        });
+      },
+          (error) {},
+      method: "GET",
+    );
+  }
 
   Future<void> openWhatsApp(String phone) async {
     final uri = Uri.parse('https://wa.me/${phone.replaceAll("+", "")}');
@@ -28,12 +58,14 @@ class _BloggersPageState extends State<BloggersPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ListView.separated(
+    return
+      _loadingBlogger ? Center(child: bossBaseLoader()) :
+      ListView.separated(
       padding: const EdgeInsets.all(12),
-      itemCount: bloggers.length,
+      itemCount: _bloggers.length,
       separatorBuilder: (_, __) => const Divider(height: 24),
       itemBuilder: (context, index) {
-        final blogger = bloggers[index];
+        final blogger = _bloggers[index];
         return Container(
           decoration: BoxDecoration(
             color: Colors.white,
@@ -53,9 +85,10 @@ class _BloggersPageState extends State<BloggersPage> {
             children: [
               // Blogger logo (same for all)
               ClipRRect(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(50),
                 child: Image.asset(
-                  'assets/drawable/nrm_logo.png',
+                  "assets/drawable/img_placeholder.jpg",
+                  //getImageURL("folder", blogger["photo"]),
                   width: 60,
                   height: 60,
                   fit: BoxFit.cover,
@@ -101,7 +134,7 @@ class _BloggersPageState extends State<BloggersPage> {
                     const SizedBox(height: 4),
                     // Phone number
                     Text(
-                      'Tel: ${blogger['phone']}',
+                      'Tel: ${blogger['contact']}',
                       style: const TextStyle(
                         color: Colors.black87,
                         fontSize: 14,
@@ -116,7 +149,7 @@ class _BloggersPageState extends State<BloggersPage> {
                         // WhatsApp Button
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () => openWhatsApp(blogger['phone']),
+                            onPressed: () => openWhatsApp(blogger['contact']),
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFFFFD401),
                               foregroundColor: Colors.green,
@@ -137,7 +170,9 @@ class _BloggersPageState extends State<BloggersPage> {
                         // Follow Button
                         Expanded(
                           child: ElevatedButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              showSnackBar(context, "Coming Soon");
+                            },
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFFFFD401),
                               foregroundColor: Colors.green,

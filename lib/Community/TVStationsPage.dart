@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../Utils/Constants.dart';
+import '../Utils/Helper.dart';
+
 class TVStationDetailPage extends StatelessWidget {
   final Map<String, dynamic> station;
 
@@ -32,8 +35,8 @@ class TVStationDetailPage extends StatelessWidget {
           children: [
             // Station image
             Center(
-              child: Image.asset(
-                station['image'],
+              child: Image.network(
+                getImageURL("MediaImages", station['logo']),
                 width: 150,
                 height: 150,
                 fit: BoxFit.contain,
@@ -68,7 +71,7 @@ class TVStationDetailPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    station['description'],
+                    station['about'],
                     style: const TextStyle(fontSize: 14, color: Colors.white),
                   ),
                 ],
@@ -120,7 +123,7 @@ class TVStationDetailPage extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        station['email'],
+                        station['email_address'],
                         style: const TextStyle(fontSize: 16),
                       ),
                     ],
@@ -144,7 +147,7 @@ class TVStationDetailPage extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        station['phone'],
+                        station['contact'],
                         style: const TextStyle(fontSize: 16),
                       ),
                     ],
@@ -280,32 +283,54 @@ class TVStations extends StatefulWidget {
 }
 
 class _TVStationsState extends State<TVStations> {
-  final List<Map<String, dynamic>> tvStations = [
-    {
-      'name': 'NTV Uganda',
-      'location': 'Kampala',
-      'image': 'assets/drawable/icons8_media_100.png',
-      'description':
-          'NTV Uganda is a leading TV station providing news, entertainment and sports.',
-      'phone': '+256701234567',
-      'email': 'info@ntv.co.ug',
-      'address': 'NTV House, Kampala, Uganda',
-    },
-    {
-      'name': 'UBC TV',
-      'location': 'Mbarara',
-      'image': 'assets/drawable/icons8_media_100.png',
-      'description':
-          'UBC TV offers educational and entertainment programming across Uganda.',
-      'phone': '+256779876543',
-      'email': 'contact@ubctv.ug',
-      'address': 'UBC Building, Mbarara, Uganda',
-    },
-  ];
+
+
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    getStation();
+
+  }
+
+
+  var _loadingStation = false;
+  var _stations = [];
+  void getStation() {
+    requestAPI(
+      getApiURL("retrieve_media_stations.php"),
+      {"station_id": "3"},
+          (loading) {
+        setState(() {
+          _loadingStation = loading;
+        });
+      }, (response) {
+        setState(() {
+          _stations = response;
+        });
+      },
+          (error) {},
+      method: "POST",
+    );
+  }
+
+
+
+
+
+
+
+
+
+
+
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
+    return
+      _loadingStation ? Center(child: bossBaseLoader()) :GridView.builder(
       padding: const EdgeInsets.all(12),
       gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
         crossAxisCount: 2,
@@ -313,12 +338,14 @@ class _TVStationsState extends State<TVStations> {
         mainAxisSpacing: 12,
         childAspectRatio: 1,
       ),
-      itemCount: tvStations.length,
+      itemCount: _stations.length,
       itemBuilder: (context, index) {
-        final station = tvStations[index];
+        final station = _stations[index];
+        customLog(station);
 
         return GestureDetector(
           onTap: () {
+            customLog(station);
             Navigator.push(
               context,
               MaterialPageRoute(
@@ -342,7 +369,7 @@ class _TVStationsState extends State<TVStations> {
             child: Center(
               child: Padding(
                 padding: const EdgeInsets.all(12),
-                child: Image.asset(station['image'], fit: BoxFit.contain),
+                child: Image.network( getImageURL("MediaImages", station['logo']) , fit: BoxFit.contain),
               ),
             ),
           ),

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../Utils/Constants.dart';
+import '../Utils/Helper.dart';
+
 class RadioStationDetailPage extends StatelessWidget {
   final Map<String, dynamic> station;
 
@@ -32,8 +35,8 @@ class RadioStationDetailPage extends StatelessWidget {
           children: [
             // Station image
             Center(
-              child: Image.asset(
-                station['image'],
+              child: Image.network(
+                getImageURL("MediaImages", station['logo']),
                 width: 150,
                 height: 150,
                 fit: BoxFit.contain,
@@ -68,7 +71,7 @@ class RadioStationDetailPage extends StatelessWidget {
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    station['description'],
+                    station['about'],
                     style: const TextStyle(fontSize: 14, color: Colors.white),
                   ),
                 ],
@@ -120,7 +123,7 @@ class RadioStationDetailPage extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        station['email'],
+                        station['email_address'],
                         style: const TextStyle(fontSize: 16),
                       ),
                     ],
@@ -144,7 +147,7 @@ class RadioStationDetailPage extends StatelessWidget {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        station['phone'],
+                        station['contact'],
                         style: const TextStyle(fontSize: 16),
                       ),
                     ],
@@ -230,7 +233,7 @@ class RadioStationDetailPage extends StatelessWidget {
                   label: 'Twitter',
                   color: Colors.lightBlue,
                   url:
-                      'https://x.com/NRMOnline?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor',
+                  'https://x.com/NRMOnline?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor',
                 ),
               ],
             ),
@@ -280,74 +283,87 @@ class RadioStations extends StatefulWidget {
 }
 
 class _RadioStationsState extends State<RadioStations> {
-  final List<Map<String, dynamic>> tvStations = [
-    {
-      'name': 'XFM Uganda',
-      'location': 'Kampala',
-      'image': 'assets/drawable/icons8_media_100.png',
-      'description':
-          'XFM Uganda is a leading radio station providing news, music, and entertainment.',
-      'phone': '+256701234567',
-      'email': 'info@xfm.co.ug',
-      'address': 'Plot 13, Ntinda, Kampala, Uganda',
+
+
+
+  @override
+  void initState() {
+    super.initState();
+    getStation();
+
+  }
+
+
+  var _loadingStation = false;
+  var _stations = [];
+  void getStation() {
+    requestAPI(
+      getApiURL("retrieve_media_stations.php"),
+      {"station_id": "2"},
+          (loading) {
+        setState(() {
+          _loadingStation = loading;
+        });
+      }, (response) {
+      setState(() {
+        _stations = response;
+      });
     },
-    {
-      'name': 'CBS FM',
-      'location': 'Kampala',
-      'image': 'assets/drawable/icons8_media_100.png',
-      'description':
-          'CBS FM is a popular radio station known for its diverse programming and community engagement.',
-      'phone': '+256779876543',
-      'email': 'cbs@gmail.com',
-      'address': 'CBS Plaza, Kampala, Uganda',
-    },
-  ];
+          (error) {},
+      method: "POST",
+    );
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
-    return GridView.builder(
-      padding: const EdgeInsets.all(12),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2,
-        crossAxisSpacing: 12,
-        mainAxisSpacing: 12,
-        childAspectRatio: 1,
-      ),
-      itemCount: tvStations.length,
-      itemBuilder: (context, index) {
-        final station = tvStations[index];
+    return
+      _loadingStation ? Center(child: bossBaseLoader()) :GridView.builder(
+        padding: const EdgeInsets.all(12),
+        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
+          childAspectRatio: 1,
+        ),
+        itemCount: _stations.length,
+        itemBuilder: (context, index) {
+          final station = _stations[index];
+          customLog(station);
 
-        return GestureDetector(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (_) => RadioStationDetailPage(station: station),
-              ),
-            );
-          },
-          child: Container(
-            decoration: BoxDecoration(
-              color: Colors.white,
-              border: Border.all(color: Colors.grey.shade300),
-              borderRadius: BorderRadius.circular(12),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.grey.withOpacity(0.1),
-                  blurRadius: 6,
-                  offset: const Offset(0, 3),
+          return GestureDetector(
+            onTap: () {
+              customLog(station);
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => RadioStationDetailPage(station: station),
                 ),
-              ],
-            ),
-            child: Center(
-              child: Padding(
-                padding: const EdgeInsets.all(12),
-                child: Image.asset(station['image'], fit: BoxFit.contain),
+              );
+            },
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    blurRadius: 6,
+                    offset: const Offset(0, 3),
+                  ),
+                ],
+              ),
+              child: Center(
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Image.network( getImageURL("MediaImages", station['logo']) , fit: BoxFit.contain),
+                ),
               ),
             ),
-          ),
-        );
-      },
-    );
+          );
+        },
+      );
   }
 }
