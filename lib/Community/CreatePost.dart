@@ -1,7 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:video_player/video_player.dart';
+
+import '../Utils/Constants.dart';
+import '../Utils/Helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
 
 class AddPostPage extends StatefulWidget {
   const AddPostPage({super.key});
@@ -50,18 +56,51 @@ class _AddPostPageState extends State<AddPostPage> {
     }
   }
 
-  void _submitPost() {
-    if (!_formKey.currentState!.validate()) return;
 
-    setState(() => _submitting = true);
 
-    Future.delayed(const Duration(seconds: 1), () {
-      setState(() => _submitting = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Post created successfully (demo)")),
-      );
-      Navigator.pop(context, true);
-    });
+
+
+  var _loadingSubmit = false;
+  Future<void> _submitPost() async {
+    print("custom-ok");
+
+    _formKey.currentState?.save();
+
+
+    var preferences = await SharedPreferences.getInstance();
+    var user = preferences.getString("user") ?? "";
+    var _user = jsonDecode(user);
+    var user_id = _user["id"] ?? "";
+    var message = _messageController.text.trim();
+
+    requestAPI(
+      getApiURL("upload_community_post.php"),
+      {
+        "user_id": user_id,
+        "message": message,
+        if (_selectedImage != null)
+          'picture': await MultipartFile.fromFile( _selectedImage!.path , filename: "picture.jpg", ),
+        if (_selectedVideo != null)
+          'video': await MultipartFile.fromFile( _selectedVideo!.path , filename: "video.mp4", ),
+        //"video": "",
+        //"picture": "",
+      },
+          (loading) {
+        setState(() {
+          _loadingSubmit = loading;
+        });
+        }, (response) {
+          if( response["code"] == 1){
+            Navigator.pop(context, true);
+          } else {
+
+          }
+        }, (error) {
+          print("error");
+        },
+      method: "POST",
+    );
+
   }
 
   @override
@@ -136,6 +175,12 @@ class _AddPostPageState extends State<AddPostPage> {
                 ),
               ),
               const SizedBox(height: 16),
+
+              if (_loadingSubmit)
+                Center(child: Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: bossBaseLoader(),
+                )),
 
               // Image preview
               if (_selectedImage != null)

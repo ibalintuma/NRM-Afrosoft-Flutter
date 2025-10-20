@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:nrm_afrosoft_flutter/Community/CreatePost.dart';
+import 'package:video_player/video_player.dart';
+
+import '../Utils/Constants.dart';
+import '../Utils/Helper.dart';
 
 class PostPage extends StatefulWidget {
   const PostPage({super.key});
@@ -9,24 +13,55 @@ class PostPage extends StatefulWidget {
 }
 
 class _PostPageState extends State<PostPage> {
-  final List<Map<String, dynamic>> _posts = [
-    {
-      "person": {"name": "John Doe"},
-      "created_at": DateTime.now().subtract(const Duration(hours: 1)),
-      "message": "Hello NRM community! Excited to be here.",
-      "picture": null,
-      "count_likes": 3,
-      "count_comments": 2,
-    },
-    {
-      "person": {"name": "Jane Smith"},
-      "created_at": DateTime.now().subtract(const Duration(hours: 2)),
-      "message": "Check out this amazing event happening this weekend!",
-      "picture": "https://images.unsplash.com/photo-1507525428034-b723cf961d3e",
-      "count_likes": 5,
-      "count_comments": 1,
-    },
-  ];
+
+
+  @override
+  void initState() {
+    super.initState();
+    getPost();
+  }
+
+
+  var _loadingPost = false;
+  var _posts = [];
+  void getPost() {
+    requestAPI(
+      getApiURL("retrieve_community_posts.php"),
+      {"": ""},
+          (loading) {
+        setState(() {
+          _loadingPost = loading;
+        });
+      }, (response) {
+        setState(() {
+          _posts = response;
+        });
+      },
+          (error) {},
+      method: "GET",
+    );
+  }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   String _formatDate(dynamic date) {
     if (date is DateTime) {
@@ -61,7 +96,9 @@ class _PostPageState extends State<PostPage> {
         backgroundColor: Color(0xFFFFD401),
         elevation: 0,
       ),
-      body: _buildPostsList(),
+      body:
+      _loadingPost ? Center(child: bossBaseLoader()) :
+      _buildPostsList(),
       floatingActionButton: Container(
         margin: const EdgeInsets.only(bottom: 10),
         child: FloatingActionButton.extended(
@@ -73,12 +110,12 @@ class _PostPageState extends State<PostPage> {
             ),
           ),
           heroTag: 'POST',
-          onPressed: () {
+          onPressed: () async {
             // Open chat screen
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => AddPostPage()),
-            );
+            var a = await Navigator.push(context, MaterialPageRoute(builder: (context) => AddPostPage()),);
+            if (a == true) {
+              getPost();
+            }
           },
           backgroundColor: Colors.black,
           icon: const Icon(Icons.edit, color: Color(0xFFFFD401)),
@@ -99,7 +136,10 @@ class _PostPageState extends State<PostPage> {
       padding: const EdgeInsets.all(12),
       itemCount: _posts.length,
       itemBuilder: (context, index) {
+
         final post = _posts[index];
+        //print("${ getImageURL("CommunityPostFiles",post["picture"])}");
+        print("${ getImageURL("CommunityPostFiles",post["video"])}");
 
         return Card(
           color: Colors.white,
@@ -119,7 +159,7 @@ class _PostPageState extends State<PostPage> {
                     const CircleAvatar(
                       radius: 20,
                       backgroundImage: AssetImage(
-                        "assets/drawable/chairman.jpg",
+                        "assets/drawable/img_placeholder.jpg",
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -127,11 +167,11 @@ class _PostPageState extends State<PostPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          post["person"]?["name"] ?? "Unknown User",
+                          post["user_name"] ?? "...",
                           style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
                         Text(
-                          _formatDate(post["created_at"]),
+                          "${post["date_time"]}",
                           style: const TextStyle(
                             color: Colors.grey,
                             fontSize: 12,
@@ -150,17 +190,21 @@ class _PostPageState extends State<PostPage> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      post["message"] ?? "",
+                      post["message"] ?? "ni",
                       style: const TextStyle(fontSize: 14),
                     ),
                     const SizedBox(height: 8),
-                    if (post["picture"] != null && post["picture"]!.isNotEmpty)
+                    if (post["image"] != null && post["image"]!.isNotEmpty)
                       ClipRRect(
                         borderRadius: BorderRadius.circular(12),
                         child: Image.network(
-                          post["picture"]!,
+                          getImageURL("CommunityPostFiles", post["image"]),
                           fit: BoxFit.cover,
                         ),
+                      ),
+                    if (post["video"] != null && post["video"]!.isNotEmpty)
+                      _VideoPlayerWidget(
+                        videoUrl: getImageURL("CommunityPostFiles", post["video"]),
                       ),
                   ],
                 ),
@@ -181,7 +225,7 @@ class _PostPageState extends State<PostPage> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          "${post['count_likes']} Likes",
+                          "${post['likes']} Likes",
                           style: const TextStyle(fontSize: 12),
                         ),
                       ],
@@ -195,7 +239,7 @@ class _PostPageState extends State<PostPage> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          "${post['count_comments']} Comments",
+                          "${post['comments_count']} Comments",
                           style: const TextStyle(fontSize: 12),
                         ),
                       ],
@@ -215,7 +259,7 @@ class _PostPageState extends State<PostPage> {
                     TextButton.icon(
                       onPressed: () {
                         setState(() {
-                          post["count_likes"] = (post["count_likes"] ?? 0) + 1;
+                          post["likes"] = (post["likes"] ?? 0) + 1;
                         });
                       },
                       icon: const Icon(Icons.thumb_up_off_alt, size: 20),
@@ -247,6 +291,93 @@ class _PostPageState extends State<PostPage> {
           ),
         );
       },
+    );
+  }
+}
+
+
+
+class _VideoPlayerWidget extends StatefulWidget {
+  final String videoUrl;
+
+  const _VideoPlayerWidget({required this.videoUrl});
+
+  @override
+  State<_VideoPlayerWidget> createState() => _VideoPlayerWidgetState();
+}
+
+class _VideoPlayerWidgetState extends State<_VideoPlayerWidget> {
+  VideoPlayerController? _controller;
+  bool _isPlaying = false;
+
+  @override
+  void dispose() {
+    _controller?.dispose();
+    super.dispose();
+  }
+
+  void _initializeAndPlay() {
+    _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
+      ..initialize().then((_) {
+        setState(() {
+          _isPlaying = true;
+        });
+        _controller!.play();
+      });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (!_isPlaying) {
+      return GestureDetector(
+        onTap: _initializeAndPlay,
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(12),
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                height: 200,
+                color: Colors.black12,
+                child: const Center(
+                  child: Icon(Icons.videocam, size: 50, color: Colors.grey),
+                ),
+              ),
+              Container(
+                decoration: BoxDecoration(
+                  color: Colors.black54,
+                  shape: BoxShape.circle,
+                ),
+                padding: const EdgeInsets.all(12),
+                child: const Icon(
+                  Icons.play_arrow,
+                  size: 40,
+                  color: Colors.white,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return _controller!.value.isInitialized
+        ? ClipRRect(
+      borderRadius: BorderRadius.circular(12),
+      child: AspectRatio(
+        aspectRatio: _controller!.value.aspectRatio,
+        child: Stack(
+          alignment: Alignment.bottomCenter,
+          children: [
+            VideoPlayer(_controller!),
+            VideoProgressIndicator(_controller!, allowScrubbing: true),
+          ],
+        ),
+      ),
+    )
+        : const SizedBox(
+      height: 200,
+      child: Center(child: CircularProgressIndicator()),
     );
   }
 }
