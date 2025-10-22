@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/About%20Nrm%20Pages/JoinNRMForm.dart';
 import 'Authentication/SplashPage.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
@@ -14,7 +15,9 @@ import 'Home/TabWidgets/About Nrm Pages/PartyStructurePage.dart';
 import 'Home/TabWidgets/About Nrm Pages/PrivacyPolicyPage.dart';
 import 'Home/TabWidgets/About Nrm Pages/TermsOfUsePage.dart';
 
+const apiKey = 'AIzaSyBTR3mfVDSrA5LY6fAPcA7nUsHqsalNxT0';
 void main() {
+  Gemini.init(apiKey: apiKey);
   WidgetsFlutterBinding.ensureInitialized();
   InAppWebViewPlatform.instance = AndroidInAppWebViewPlatform();
   runApp(const MyApp());
