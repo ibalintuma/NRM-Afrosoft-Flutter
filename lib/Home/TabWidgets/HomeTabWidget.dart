@@ -7,6 +7,8 @@ import 'package:nrm_afrosoft_flutter/Home/TabWidgets/RDCsPage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Utils/Constants.dart';
 import '../../Utils/Helper.dart';
+import 'NRM Candidates/CandidatesPage.dart';
+import 'NearYouPage.dart';
 import 'NewsDetailPage.dart';
 
 class HomeTabWidget extends StatefulWidget {
@@ -437,30 +439,38 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
 
               // Right: NRM Candidates
               Expanded(
-                child: Container(
-                  height: 140,
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFFFD401),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/drawable/nrm_logo.png', // 👈 same logo
-                        width: 50,
-                        height: 50,
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'NRM Candidates',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => CandidatesPage()),
+                    );
+                  },
+                  child: Container(
+                    height: 140,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFFD401),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/drawable/nrm_logo.png', // 👈 same logo
+                          width: 50,
+                          height: 50,
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 8),
+                        const Text(
+                          'NRM Candidates',
+                          style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -469,57 +479,68 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
           const SizedBox(height: 16),
 
           // 🌍 Near You Section
-          Container(
-            height: 140,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(16),
-              image: const DecorationImage(
-                image: AssetImage(
-                  'assets/drawable/near_you.jpg',
-                ), // 👈 background image
-                fit: BoxFit.cover,
+          GestureDetector(
+            onTap: () {
+              // You can add navigation or action here
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => NearYouPage()),
+              );
+            },
+            child: Container(
+              height: 140,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(16),
+                image: const DecorationImage(
+                  image: AssetImage(
+                    'assets/drawable/near_you.jpg',
+                  ), // 👈 background image
+                  fit: BoxFit.cover,
+                ),
               ),
-            ),
-            child: Stack(
-              alignment: Alignment.center,
-              children: [
-                // Semi-transparent overlay for clarity
-                Container(
-                  decoration: BoxDecoration(
-                    color: Colors.black.withOpacity(0.4),
-                    borderRadius: BorderRadius.circular(16),
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  // Semi-transparent overlay for clarity
+                  Container(
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.4),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
                   ),
-                ),
 
-                // Icon + Text vertically aligned
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: Color(0xFFFFD401), // Yellow background for icon
+                  // Icon + Text vertically aligned
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.all(12),
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.circle,
+                          color: Color(
+                            0xFFFFD401,
+                          ), // Yellow background for icon
+                        ),
+                        child: const Icon(
+                          Icons.location_on,
+                          color: Colors.black,
+                          size: 32,
+                        ),
                       ),
-                      child: const Icon(
-                        Icons.location_on,
-                        color: Colors.black,
-                        size: 32,
+                      const SizedBox(height: 10),
+                      const Text(
+                        'Near You',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 10),
-                    const Text(
-                      'Near You',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+                    ],
+                  ),
+                ],
+              ),
             ),
           ),
           const SizedBox(height: 16),
