@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/AskPresidentPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/Centtral%20Executive%20Committee/CECPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/General%20Secretary/GSPage.dart';
-
+import 'package:nrm_afrosoft_flutter/Home/TabWidgets/Leaders/LeadersPage.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../Utils/Constants.dart';
 import '../../Utils/Helper.dart';
 import 'NewsDetailPage.dart';
@@ -21,6 +22,17 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
   void initState() {
     super.initState();
     getNews();
+  }
+
+  Future<void> _launchManifesto() async {
+    final Uri url = Uri.parse(
+      'https://www.nrm.ug/sites/default/files/2025-09/NRM%20Manifesto%202026-2031.pdf',
+    ); // your URL here
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
   }
 
   var _loadingNews = false;
@@ -331,15 +343,16 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
               Expanded(
                 child: Stack(
                   children: [
-                    Container(
-                      height: 140,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        image: const DecorationImage(
-                          image: AssetImage(
-                            'assets/drawable/manifesto_image.PNG',
+                    GestureDetector(
+                      onTap: _launchManifesto,
+                      child: Container(
+                        height: 140,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          image: const DecorationImage(
+                            image: AssetImage('assets/drawable/manifesto.jpg'),
+                            fit: BoxFit.cover,
                           ),
-                          fit: BoxFit.cover,
                         ),
                       ),
                     ),
@@ -351,13 +364,22 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
               Expanded(
                 child: Stack(
                   children: [
-                    Container(
-                      height: 140,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        image: const DecorationImage(
-                          image: AssetImage('assets/drawable/leadership.jpg'),
-                          fit: BoxFit.cover,
+                    GestureDetector(
+                      onTap: () {
+                        // You can add navigation or action here
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => LeadersPage()),
+                        );
+                      },
+                      child: Container(
+                        height: 140,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          image: const DecorationImage(
+                            image: AssetImage('assets/drawable/leadership.jpg'),
+                            fit: BoxFit.cover,
+                          ),
                         ),
                       ),
                     ),
