@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/AskPresidentPage.dart';
+import 'package:nrm_afrosoft_flutter/Home/TabWidgets/Centtral%20Executive%20Committee/CECPage.dart';
 
 import '../../Utils/Constants.dart';
 import '../../Utils/Helper.dart';
@@ -231,24 +232,32 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
             children: [
               // Left: Gradient Container
               Expanded(
-                child: Container(
-                  height: 140,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    gradient: const LinearGradient(
-                      colors: [Colors.yellow, Colors.black],
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
+                child: GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => CECPage()),
+                    );
+                  },
+                  child: Container(
+                    height: 140,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      gradient: const LinearGradient(
+                        colors: [Color(0xFFFFD401), Colors.black],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
                     ),
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Central Executive Committee (CEC)',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                    child: const Center(
+                      child: Text(
+                        'Central Executive Committee (CEC)',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
                     ),
                   ),
