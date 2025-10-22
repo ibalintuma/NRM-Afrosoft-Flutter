@@ -3,6 +3,7 @@ import 'package:nrm_afrosoft_flutter/Home/TabWidgets/AskPresidentPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/Centtral%20Executive%20Committee/CECPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/General%20Secretary/GSPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/Leaders/LeadersPage.dart';
+import 'package:nrm_afrosoft_flutter/Home/TabWidgets/RDCsPage.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Utils/Constants.dart';
 import '../../Utils/Helper.dart';
@@ -396,30 +397,39 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
             children: [
               // Left: RDCs and DRDCs
               Expanded(
-                child: Container(
-                  height: 140,
-                  decoration: BoxDecoration(
-                    color: Colors.grey[800],
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Image.asset(
-                        'assets/drawable/nrm_logo.png', // 👈 your NRM logo
-                        width: 50,
-                        height: 50,
-                      ),
-                      const SizedBox(height: 8),
-                      const Text(
-                        "RDC's and DRDC's",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                child: GestureDetector(
+                  onTap: () {
+                    // You can add navigation or action here
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => RDCsPage()),
+                    );
+                  },
+                  child: Container(
+                    height: 140,
+                    decoration: BoxDecoration(
+                      color: Color.fromARGB(255, 94, 128, 186),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          'assets/drawable/nrm_logo.png', // 👈 your NRM logo
+                          width: 50,
+                          height: 50,
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 8),
+                        const Text(
+                          "RDC's and DRDC's",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
