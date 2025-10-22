@@ -40,6 +40,7 @@ class MyApp extends StatelessWidget {
         '/gallery': (context) => const GalleryPage(),
         '/privacyPolicy': (context) => const PrivacyPolicyPage(),
         '/termsOfUse': (context) => const TermsOfUsePage(),
+        '/splash': (context) => const SplashPage(),
       },
       debugShowCheckedModeBanner: false,
       title: 'NRM Party App',
