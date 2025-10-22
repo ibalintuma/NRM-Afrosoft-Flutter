@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:nrm_afrosoft_flutter/Community/CommunityPage.dart';
+import 'package:nrm_afrosoft_flutter/Home/FlagBearersPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/SupportCenter.dart';
 import 'package:nrm_afrosoft_flutter/Utils/Constants.dart';
 import 'package:nrm_afrosoft_flutter/Utils/Helper.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../Authentication/LoginPage.dart';
+import 'ProfilePage.dart';
 import 'TabWidgets/AboutNRMWidget.dart';
 import 'TabWidgets/AchievementsWidget.dart';
 import 'TabWidgets/EventsWidget.dart';
@@ -79,6 +82,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
       method: "GET",
     );
   }
+  // bool checkUserLoggedIn() {
+  //   // Example: return true if user token exists
+  //   return SharedPreferences.getInstance().then((prefs) {
+  //     return prefs.containsKey('userToken');
+  //   });
+  // }
 
   @override
   void dispose() {
@@ -97,65 +106,78 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         backgroundColor: const Color(0xFFFFD401),
         toolbarHeight: 90,
         titleSpacing: 0,
-        title: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
-                  Text(
-                    'NRM',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20,
-                    ),
+        title: Row(
+          children: [
+            // Left side: NRM title
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  'NRM',
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                    fontSize: 20,
                   ),
-                  Text(
-                    'National Resistance Movement',
-                    style: TextStyle(color: Colors.black, fontSize: 14),
+                ),
+                Text(
+                  'National Resistance Movement',
+                  style: TextStyle(color: Colors.black, fontSize: 14),
+                ),
+                SizedBox(height: 3),
+              ],
+            ),
+            SizedBox(width: 30),
+            // Right side: icons
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  onPressed: () {},
+                  icon: const Icon(Icons.translate, color: Colors.white),
+                ),
+                IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => const ProfilePage()),
+                    );
+                  },
+                  icon: const CircleAvatar(
+                    radius: 16,
+                    backgroundImage: AssetImage(
+                      'assets/drawable/avatar.png',
+                    ), // replace with your asset
                   ),
-                  SizedBox(height: 3),
-                ],
-              ),
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.translate, color: Colors.white),
-                  ),
-                  IconButton(
-                    onPressed: () {},
-                    icon: const Icon(Icons.support_agent, color: Colors.white),
-                  ),
-                  PopupMenuButton<String>(
-                    onSelected: (value) {},
-                    itemBuilder: (BuildContext context) {
-                      return const [
-                        PopupMenuItem(
-                          value: 'option1',
-                          child: Text('Option 1'),
-                        ),
-                        PopupMenuItem(
-                          value: 'option2',
-                          child: Text('Option 2'),
-                        ),
-                      ];
-                    },
-                    icon: const Icon(Icons.more_vert, color: Colors.white),
-                  ),
-                ],
-              ),
-            ],
-          ),
+                ),
+                PopupMenuButton<String>(
+                  onSelected: (value) {},
+                  itemBuilder: (BuildContext context) {
+                    return const [
+                      PopupMenuItem(
+                        value: 'Share App',
+                        child: Text('Share App'),
+                      ),
+                      PopupMenuItem(
+                        value: 'Terms of Use',
+                        child: Text('Terms of Use'),
+                      ),
+                      PopupMenuItem(
+                        value: 'Privacy Policy',
+                        child: Text('Privacy Policy'),
+                      ),
+                    ];
+                  },
+                  icon: const Icon(Icons.more_vert, color: Colors.white),
+                ),
+
+                // Profile icon
+              ],
+            ),
+          ],
         ),
       ),
-
       body: CustomScrollView(
         slivers: [
           // Carousel Slider
@@ -253,7 +275,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                       Row(
                         children: [
                           TextButton(
-                            onPressed: () {},
+                            onPressed: () {
+                              // Navigate to full list of flag bearers
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const CampaignPostersPage(),
+                                ),
+                              );
+                            },
                             child: const Text(
                               'View All',
                               style: TextStyle(
@@ -317,7 +347,40 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
 
                   // Forwarding in Campaign Poster button
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder:
+                            (context) => AlertDialog(
+                              title: const Text('Login Required'),
+                              content: const Text(
+                                'You need to log in to forward this campaign poster.',
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed:
+                                      () => Navigator.pop(
+                                        context,
+                                      ), // Close the dialog
+                                  child: const Text('Cancel'),
+                                ),
+                                TextButton(
+                                  onPressed: () {
+                                    Navigator.pop(context); // Close the dialog
+                                    // Navigate to login page
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (_) => const LoginPage(),
+                                      ),
+                                    );
+                                  },
+                                  child: const Text('Login'),
+                                ),
+                              ],
+                            ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       foregroundColor: const Color(0xFFFFD401),

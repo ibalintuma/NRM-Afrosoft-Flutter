@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:nrm_afrosoft_flutter/Home/TabWidgets/AskPresidentPage.dart';
 
 import '../../Utils/Constants.dart';
 import '../../Utils/Helper.dart';
+import 'NewsDetailPage.dart';
 
 class HomeTabWidget extends StatefulWidget {
   const HomeTabWidget({super.key});
@@ -23,17 +25,24 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
   var _news = [];
   void getNews() {
     //requestAPI(getApiURL("retrieve_campaign_posts.php"), {"":""}, (loading){}, (response){}, (error){}, method: "GET");
-    requestAPI(getApiURL("retrieve_all_news.php"), {"":""}, (loading){
-      setState(() {
-        _loadingNews = loading;
-      });
-    }, (response){
-      print("_NEWS");
-      setState(() {
-        _news = response;
-      });
-      print(_news);
-    }, (error){}, method: "GET");
+    requestAPI(
+      getApiURL("retrieve_all_news.php"),
+      {"": ""},
+      (loading) {
+        setState(() {
+          _loadingNews = loading;
+        });
+      },
+      (response) {
+        print("_NEWS");
+        setState(() {
+          _news = response;
+        });
+        print(_news);
+      },
+      (error) {},
+      method: "GET",
+    );
   }
 
   @override
@@ -59,148 +68,165 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
               itemCount: _news.length,
               itemBuilder: (context, index) {
                 final news = _news[index];
-                //image, body, headline, date
                 return Padding(
                   padding: const EdgeInsets.only(right: 12),
-                  child: Stack(
-                    children: [
-                      // News Image
-                      ClipRRect(
-                        borderRadius: BorderRadius.circular(12),
-                        child: Image.network(
-                          getImageURL("NewsImages", news["image"]),
-                          height: 220,
-                          width: 300,
-                          fit: BoxFit.cover,
+                  child: GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => NewsDetailPage(news: news),
                         ),
-                      ),
-
-                      // Yellow "NEWS UPDATE" label (top-left)
-                      Positioned(
-                        top: 8,
-                        left: 8,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
+                      );
+                    },
+                    child: Stack(
+                      children: [
+                        // News Image
+                        ClipRRect(
+                          borderRadius: BorderRadius.circular(12),
+                          child: Image.network(
+                            getImageURL("NewsImages", news["image"]),
+                            height: 220,
+                            width: 300,
+                            fit: BoxFit.cover,
                           ),
-                          decoration: BoxDecoration(
-                            color: const Color(0xFFFFD401),
-                            borderRadius: BorderRadius.circular(6),
-                          ),
-                          child: const Text(
-                            "NEWS UPDATE",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 12,
-                              color: Colors.black,
+                        ),
+                        // Yellow "NEWS UPDATE" label
+                        Positioned(
+                          top: 8,
+                          left: 8,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFFFFD401),
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            child: const Text(
+                              "NEWS UPDATE",
+                              style: TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 12,
+                                color: Colors.black,
+                              ),
                             ),
                           ),
                         ),
-                      ),
-
-                      // News Description (bottom)
-                      Positioned(
-                        left: 0,
-                        right: 0,
-                        bottom: 0,
-                        child: Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.6),
-                            borderRadius: const BorderRadius.vertical(
-                              bottom: Radius.circular(12),
+                        // Description & Date
+                        Positioned(
+                          left: 0,
+                          right: 0,
+                          bottom: 0,
+                          child: Container(
+                            padding: const EdgeInsets.all(10),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.6),
+                              borderRadius: const BorderRadius.vertical(
+                                bottom: Radius.circular(12),
+                              ),
                             ),
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              // Description
-                              Expanded(
-                                child: Text(
-                          news["headline"],
+                            child: Row(
+                              crossAxisAlignment: CrossAxisAlignment.end,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Expanded(
+                                  child: Text(
+                                    news["headline"],
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                    maxLines: 2,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                                Text(
+                                  formatLaravelTime(news["date"]),
                                   style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 14,
+                                    color: Color(0xFFFFD401),
+                                    fontSize: 12,
                                     fontWeight: FontWeight.bold,
                                   ),
-                                  maxLines: 2,
-                                  overflow: TextOverflow.ellipsis,
                                 ),
-                              ),
-
-                              // Date (bottom right)
-                              Text(
-                formatLaravelTime(news["date"])
-                                ,
-                                style: const TextStyle(
-                                  color: Color(0xFFFFD401),
-                                  fontSize: 12,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                            ],
+                              ],
+                            ),
                           ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 );
               },
             ),
           ),
           const SizedBox(height: 15),
-          Container(
-            padding: const EdgeInsets.all(16),
-            decoration: BoxDecoration(
-              color: Colors.black,
-              border: Border.all(color: Colors.yellow, width: 2),
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Row(
-              children: [
-                // Left text part
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      const Text(
-                        'NRM CHAIRMAN',
-                        style: TextStyle(
-                          color: Color(0xFFFFD401),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => AskPresidentPage()),
+              );
+            },
+            child: Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Colors.black,
+                border: Border.all(color: Colors.yellow, width: 2),
+                borderRadius: BorderRadius.circular(16),
+              ),
+              child: Row(
+                children: [
+                  // Left text part
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'NRM CHAIRMAN',
+                          style: TextStyle(
+                            color: Color(0xFFFFD401),
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Container(height: 2, color: Color(0xFFFFD401), width: 80),
-                      const SizedBox(height: 8),
-                      const Text(
-                        'H.E Yoweri Kaguta Museveni',
-                        style: TextStyle(
+                        const SizedBox(height: 4),
+                        Container(
+                          height: 2,
                           color: Color(0xFFFFD401),
-                          fontSize: 18,
-                          fontWeight: FontWeight.w600,
+                          width: 80,
                         ),
-                      ),
-                    ],
+                        const SizedBox(height: 8),
+                        const Text(
+                          'H.E Yoweri Kaguta Museveni',
+                          style: TextStyle(
+                            color: Color(0xFFFFD401),
+                            fontSize: 18,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
 
-                // Right image
-                ClipRRect(
-                  child: Image.asset(
-                    'assets/drawable/hero.png', // 👈 Replace with your asset image
-                    width: 90,
-                    height: 90,
-                    fit: BoxFit.cover,
+                  // Right image
+                  ClipRRect(
+                    child: Image.asset(
+                      'assets/drawable/hero.png', // 👈 Replace with your asset image
+                      width: 90,
+                      height: 90,
+                      fit: BoxFit.cover,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
+
           const SizedBox(height: 20), // Spacing at the bottom;
+
           Row(
             children: [
               // Left: Gradient Container
