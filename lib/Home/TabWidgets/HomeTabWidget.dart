@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/AskPresidentPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/Centtral%20Executive%20Committee/CECPage.dart';
+import 'package:nrm_afrosoft_flutter/Home/TabWidgets/General%20Secretary/GSPage.dart';
 
 import '../../Utils/Constants.dart';
 import '../../Utils/Helper.dart';
@@ -284,11 +285,21 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
                       ),
                     ),
                     // Dark overlay
-                    Container(
-                      height: 140,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(16),
-                        color: Colors.black.withOpacity(0.5),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => GSPage(),
+                          ), // 👈 Navigate to GS page
+                        );
+                      },
+                      child: Container(
+                        height: 140,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(16),
+                          color: Colors.black.withOpacity(0.5),
+                        ),
                       ),
                     ),
                     // Centered text
