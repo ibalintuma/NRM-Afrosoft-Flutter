@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:nrm_afrosoft_flutter/Community/CommunityPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/FlagBearersPage.dart';
+import 'package:nrm_afrosoft_flutter/Home/PostPosterPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/SupportCenter.dart';
 import 'package:nrm_afrosoft_flutter/Utils/Constants.dart';
 import 'package:nrm_afrosoft_flutter/Utils/Helper.dart';
@@ -133,10 +134,11 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                IconButton(
-                  onPressed: () {},
-                  icon: const Icon(Icons.translate, color: Colors.white),
-                ),
+                // IconButton(
+                //   onPressed: () {},
+                //   icon: const Icon(Icons.translate, color: Colors.white),
+                // ),
+                SizedBox(width: 60),
                 IconButton(
                   onPressed: () {
                     Navigator.push(
@@ -151,26 +153,26 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     ), // replace with your asset
                   ),
                 ),
-                PopupMenuButton<String>(
-                  onSelected: (value) {},
-                  itemBuilder: (BuildContext context) {
-                    return const [
-                      PopupMenuItem(
-                        value: 'Share App',
-                        child: Text('Share App'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Terms of Use',
-                        child: Text('Terms of Use'),
-                      ),
-                      PopupMenuItem(
-                        value: 'Privacy Policy',
-                        child: Text('Privacy Policy'),
-                      ),
-                    ];
-                  },
-                  icon: const Icon(Icons.more_vert, color: Colors.white),
-                ),
+                // PopupMenuButton<String>(
+                //   onSelected: (value) {},
+                //   itemBuilder: (BuildContext context) {
+                //     return const [
+                //       PopupMenuItem(
+                //         value: 'Share App',
+                //         child: Text('Share App'),
+                //       ),
+                //       PopupMenuItem(
+                //         value: 'Terms of Use',
+                //         child: Text('Terms of Use'),
+                //       ),
+                //       PopupMenuItem(
+                //         value: 'Privacy Policy',
+                //         child: Text('Privacy Policy'),
+                //       ),
+                //     ];
+                //   },
+                //   icon: const Icon(Icons.more_vert, color: Colors.white),
+                // ),
 
                 // Profile icon
               ],
@@ -231,7 +233,15 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     bottom: 16,
                     right: 16,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // Navigate to Join NRM page
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const SupportCenter(),
+                          ),
+                        );
+                      },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         foregroundColor: const Color(0xFFFFD401),
@@ -348,38 +358,45 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                   // Forwarding in Campaign Poster button
                   ElevatedButton(
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder:
-                            (context) => AlertDialog(
-                              title: const Text('Login Required'),
-                              content: const Text(
-                                'You need to log in to forward this campaign poster.',
-                              ),
-                              actions: [
-                                TextButton(
-                                  onPressed:
-                                      () => Navigator.pop(
-                                        context,
-                                      ), // Close the dialog
-                                  child: const Text('Cancel'),
-                                ),
-                                TextButton(
-                                  onPressed: () {
-                                    Navigator.pop(context); // Close the dialog
-                                    // Navigate to login page
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (_) => const LoginPage(),
-                                      ),
-                                    );
-                                  },
-                                  child: const Text('Login'),
-                                ),
-                              ],
-                            ),
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (_) => const PostPosterPage(),
+                        ),
                       );
+
+                      // showDialog(
+                      //   context: context,
+                      //   builder:
+                      //       (context) => AlertDialog(
+                      //         title: const Text('Login Required'),
+                      //         content: const Text(
+                      //           'You need to log in to forward this campaign poster.',
+                      //         ),
+                      //         actions: [
+                      //           TextButton(
+                      //             onPressed:
+                      //                 () => Navigator.pop(
+                      //                   context,
+                      //                 ), // Close the dialog
+                      //             child: const Text('Cancel'),
+                      //           ),
+                      //           TextButton(
+                      //             onPressed: () {
+                      //               Navigator.pop(context); // Close the dialog
+                      //               // Navigate to login page
+                      //               Navigator.push(
+                      //                 context,
+                      //                 MaterialPageRoute(
+                      //                   builder: (_) => const LoginPage(),
+                      //                 ),
+                      //               );
+                      //             },
+                      //             child: const Text('Login'),
+                      //           ),
+                      //         ],
+                      //       ),
+                      // );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,

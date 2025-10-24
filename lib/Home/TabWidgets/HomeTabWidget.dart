@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nrm_afrosoft_flutter/Home/SupportCenter.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/AskPresidentPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/Centtral%20Executive%20Committee/CECPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/General%20Secretary/GSPage.dart';
@@ -30,6 +31,17 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
   Future<void> _launchManifesto() async {
     final Uri url = Uri.parse(
       'https://www.nrm.ug/sites/default/files/2025-09/NRM%20Manifesto%202026-2031.pdf',
+    ); // your URL here
+    if (await canLaunchUrl(url)) {
+      await launchUrl(url, mode: LaunchMode.externalApplication);
+    } else {
+      throw 'Could not launch $url';
+    }
+  }
+
+  Future<void> _launchRoadMap() async {
+    final Uri url = Uri.parse(
+      'https://nrm.ug/libraries/pdf.js/web/viewer.html?file=https%3A%2F%2Fnrm.ug%2Fsites%2Fdefault%2Ffiles%2F2025-04%2FA2%2520NRM%2520POLITICAL%2520ROADMAP%25202024-2027-1_250415_003722-1.pdf',
     ); // your URL here
     if (await canLaunchUrl(url)) {
       await launchUrl(url, mode: LaunchMode.externalApplication);
@@ -551,16 +563,19 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
             children: [
               // First container
               Expanded(
-                child: Container(
-                  height: 100,
-                  margin: const EdgeInsets.only(right: 8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    image: const DecorationImage(
-                      image: AssetImage(
-                        'assets/drawable/road_map.png',
-                      ), // 👈 replace with your image
-                      fit: BoxFit.cover,
+                child: GestureDetector(
+                  onTap: _launchRoadMap,
+                  child: Container(
+                    height: 100,
+                    margin: const EdgeInsets.only(right: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      image: const DecorationImage(
+                        image: AssetImage(
+                          'assets/drawable/road_map.png',
+                        ), // 👈 replace with your image
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
@@ -568,16 +583,25 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
 
               // Second container
               Expanded(
-                child: Container(
-                  height: 100,
-                  margin: const EdgeInsets.only(left: 8),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(16),
-                    image: const DecorationImage(
-                      image: AssetImage(
-                        'assets/drawable/contact.jpg',
-                      ), // 👈 replace with your image
-                      fit: BoxFit.cover,
+                child: GestureDetector(
+                  onTap: () {
+                    // You can add navigation or action here
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (_) => SupportCenter()),
+                    );
+                  },
+                  child: Container(
+                    height: 100,
+                    margin: const EdgeInsets.only(left: 8),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(16),
+                      image: const DecorationImage(
+                        image: AssetImage(
+                          'assets/drawable/contact.jpg',
+                        ), // 👈 replace with your image
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
