@@ -3,6 +3,7 @@ import 'dart:async';
 
 import 'package:nrm_afrosoft_flutter/Authentication/LoginPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/HomePage.dart';
+import 'package:nrm_afrosoft_flutter/Utils/Helper.dart';
 
 import 'RegisterPage.dart';
 
@@ -116,7 +117,7 @@ class _WelcomePageState extends State<WelcomePage>
                 ],
               ),
 
-              const SizedBox(height: 140),
+              const SizedBox(height: 40),
 
               // 🔹 NRM Logo
               Image.asset('assets/drawable/nrm_logo.png', height: 80),
@@ -190,7 +191,10 @@ class _WelcomePageState extends State<WelcomePage>
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: ElevatedButton.icon(
-                  onPressed: () {},
+                  onPressed: () {
+                    //coming soon
+                    showSnackBar(context, "Coming Soon");
+                  },
                   icon: const Text(
                     'G',
                     style: TextStyle(

@@ -222,8 +222,8 @@ class _ProfilePageState extends State<ProfilePage> {
 
 
   String picture = "picture";
-  String username = "John Doe";
-  String email = "john.doe@example.com";
+  String username = "Guest";
+  String email = "Guest@nrmapp.com";
   String district = "Kampala";
 
   void handleDeleteAccount(BuildContext context) {
