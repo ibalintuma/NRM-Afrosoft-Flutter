@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class CECDetailsPage extends StatelessWidget {
-  final Map<String, String> member;
+  final dynamic member;
 
   const CECDetailsPage({super.key, required this.member});
 
@@ -9,7 +9,7 @@ class CECDetailsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(member['role'] ?? 'Role'),
+        title: Text(member['position'] ?? 'Role'),
         backgroundColor: Color(0xFFFFD401),
       ),
       body: SingleChildScrollView(
@@ -17,7 +17,7 @@ class CECDetailsPage extends StatelessWidget {
           children: [
             // Full width image
             if (member['image'] != null)
-              Image.asset(
+              Image.network(
                 member['image']!,
                 width: double.infinity,
                 height: 250,
@@ -51,7 +51,7 @@ class CECDetailsPage extends StatelessWidget {
                         const SizedBox(width: 6),
                         Expanded(
                           child: Text(
-                            member['role'] ?? '',
+                            member['position'] ?? '',
                             style: TextStyle(fontSize: 16, color: Colors.black),
                           ),
                         ),

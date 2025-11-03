@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:nrm_afrosoft_flutter/Utils/Helper.dart';
 
+import '../../../Utils/Constants.dart';
 import 'CECDetailsPage.dart';
 
 class CECPage extends StatefulWidget {
@@ -11,19 +13,31 @@ class CECPage extends StatefulWidget {
 
 class _CECPageState extends State<CECPage> {
   // Demo data
-  final List<Map<String, String>> cecMembers = [
-    {
-      'name': 'Yoweri Kaguta Museveni',
-      'role': 'Chairman, NRM Party',
-      'image': 'assets/drawable/chairman.jpg',
-    },
-    {
-      'name': 'Yoweri Kaguta Museveni',
-      'role': 'Chairman, NRM Party',
-      'image': 'assets/drawable/chairman.jpg',
-    },
-  ];
+  var cecMembers = [];
 
+  
+  @override
+  void initState() {
+    super.initState();
+    getCec();
+  }
+
+  var _loaderCec = false;
+  getCec(){
+    requestAPI(getApiURL("api/executive_committee_members"), {"":""}, (loader){
+      setState(() {
+        _loaderCec = loader;
+      });
+    }, (response){
+      customLog(response);
+      setState(() {
+        cecMembers = response["data"];
+      });
+    }, (error){
+      customLog(error);
+    },method: "GET");
+  }
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,11 +45,19 @@ class _CECPageState extends State<CECPage> {
         title: const Text("Central Executive Committee"),
         backgroundColor: Color(0xFFFFD401),
       ),
-      body: ListView.builder(
+      body: _loaderCec ? Center(child: bossBaseLoader()) : ListView.builder(
         itemCount: cecMembers.length,
         padding: const EdgeInsets.all(12),
         itemBuilder: (context, index) {
           final member = cecMembers[index];
+          /*{
+I/flutter ( 9113): │ 🐛       "id": 12,
+I/flutter ( 9113): │ 🐛       "name": "Hon Katongole Singh",
+I/flutter ( 9113): │ 🐛       "position": "Hon. Uhuru Salim Nsubuga Vice Chairperson - Kampala",
+I/flutter ( 9113): │ 🐛       "image": "https://nrm.afrosoftug.com/LeaderImages/cec_1756737431.jpg",
+I/flutter ( 9113): │ 🐛       "about": null,
+I/flutter ( 9113): │ 🐛       "created_at": "2025-08-12 09:16:47"
+I/flutter ( 9113): │ 🐛     },*/
           return GestureDetector(
             onTap: () {
               Navigator.push(
@@ -58,7 +80,7 @@ class _CECPageState extends State<CECPage> {
                   children: [
                     ClipRRect(
                       borderRadius: BorderRadius.circular(8),
-                      child: Image.asset(
+                      child: Image.network(
                         member['image']!,
                         width: 90,
                         height: 90,
@@ -79,7 +101,7 @@ class _CECPageState extends State<CECPage> {
                           ),
                           const SizedBox(height: 4),
                           Text(
-                            member['role']!,
+                            member['position']!,
                             style: TextStyle(
                               fontSize: 14,
                               color: Colors.grey[700],
