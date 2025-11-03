@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../Utils/Constants.dart';
+import '../../../Utils/Helper.dart';
 import 'LeadersDetailPage.dart';
 
 class LeadersPage extends StatefulWidget {
@@ -13,29 +15,33 @@ class _LeadersPageState extends State<LeadersPage> {
   bool _isSearching = false;
   final TextEditingController _searchController = TextEditingController();
 
-  // Demo data
-  final List<Map<String, dynamic>> leaderCategories = [
-    {
-      'category': 'National Chairperson',
-      'leaders': [
-        {
-          'name': 'Yoweri Kaguta Museveni',
-          'role': 'Chairman, NRM Party',
-          'image': 'assets/drawable/chairman.jpg',
-        },
-      ],
-    },
-    {
-      'category': 'Secretary General',
-      'leaders': [
-        {
-          'name': 'Richard Todwong',
-          'role': 'NRM Secretary General',
-          'image': 'assets/drawable/todwong_update.jpg',
-        },
-      ],
-    },
-  ];
+
+
+  @override
+  void initState() {
+    super.initState();
+    getLeaders();
+  }
+
+  var leaderCategories = [];
+  var _loaderLeaders = false;
+  getLeaders(){
+    requestAPI(getApiURL("retrieve_all_leaders.php"), {"":""}, (loader){
+      setState(() {
+        _loaderLeaders = loader;
+      });
+    }, (response){
+      customLog(response);
+      setState(() {
+        leaderCategories = response;
+      });
+    }, (error){
+      customLog(error);
+    },method: "GET");
+  }
+
+
+
 
   final Map<String, bool> _expandedStates = {};
 
@@ -71,13 +77,15 @@ class _LeadersPageState extends State<LeadersPage> {
           ),
         ],
       ),
-      body: ListView.builder(
+      body:
+      _loaderLeaders ? Center(child: bossBaseLoader()) :
+      ListView.builder(
         itemCount: leaderCategories.length,
         padding: const EdgeInsets.all(12),
         itemBuilder: (context, index) {
           final category = leaderCategories[index];
-          final categoryName = category['category'];
-          final leaders = category['leaders'] as List;
+          final categoryName = category['office'];
+          final leaders = category['members'] as List;
 
           final isExpanded = _expandedStates[categoryName] ?? false;
 
@@ -158,6 +166,16 @@ class _LeadersPageState extends State<LeadersPage> {
                   child: Column(
                     children:
                         leaders.map((leader) {
+
+                          /*{
+I/flutter ( 9113): │ 🐛         "id": "1",
+I/flutter ( 9113): │ 🐛         "office_id": "1",
+I/flutter ( 9113): │ 🐛         "name": "H.E.YOWERI KAGUTA MUSEVENI",
+I/flutter ( 9113): │ 🐛         "position": "Chairman-NRM",
+I/flutter ( 9113): │ 🐛         "image": "President_Yoweri_Museveni.jpg",
+I/flutter ( 9113): │ 🐛         "about": null
+I/flutter ( 9113): │ 🐛       }*/
+
                           return GestureDetector(
                             onTap: () {
                               Navigator.push(
@@ -174,8 +192,8 @@ class _LeadersPageState extends State<LeadersPage> {
                                 children: [
                                   CircleAvatar(
                                     radius: 28,
-                                    backgroundImage: AssetImage(
-                                      leader['image']!,
+                                    backgroundImage: NetworkImage(
+                                      getImageURL("LeaderImages", leader['image'] ?? "..."),
                                     ),
                                   ),
                                   const SizedBox(width: 12),
@@ -185,7 +203,7 @@ class _LeadersPageState extends State<LeadersPage> {
                                           CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          leader['name']!,
+                                          leader['name'] ?? "...",
                                           style: const TextStyle(
                                             fontSize: 16,
                                             fontWeight: FontWeight.bold,
@@ -193,7 +211,7 @@ class _LeadersPageState extends State<LeadersPage> {
                                         ),
                                         const SizedBox(height: 4),
                                         Text(
-                                          leader['role']!,
+                                          leader['position'] ?? "...",
                                           style: TextStyle(
                                             fontSize: 14,
                                             color: Colors.grey[700],

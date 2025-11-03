@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart'; // for sharing
+import 'package:share_plus/share_plus.dart';
+
+import '../../../Utils/Constants.dart'; // for sharing
 
 class LeadersDetailPage extends StatefulWidget {
-  final Map<String, String>? leader; // accept leader data (optional for now)
+  final dynamic leader; // accept leader data (optional for now)
 
   const LeadersDetailPage({super.key, this.leader});
 
@@ -13,13 +15,15 @@ class LeadersDetailPage extends StatefulWidget {
 class _LeadersDetailPageState extends State<LeadersDetailPage> {
   @override
   Widget build(BuildContext context) {
-    final leader =
-        widget.leader ??
-        {
-          'name': 'Yoweri Kaguta Museveni',
-          'role': 'National Chairperson',
-          'image': 'assets/drawable/chairman.jpg', // placeholder image
-        };
+    final leader = widget.leader;
+/*{
+I/flutter ( 9113): │ 🐛         "id": "1",
+I/flutter ( 9113): │ 🐛         "office_id": "1",
+I/flutter ( 9113): │ 🐛         "name": "H.E.YOWERI KAGUTA MUSEVENI",
+I/flutter ( 9113): │ 🐛         "position": "Chairman-NRM",
+I/flutter ( 9113): │ 🐛         "image": "President_Yoweri_Museveni.jpg",
+I/flutter ( 9113): │ 🐛         "about": null
+I/flutter ( 9113): │ 🐛       }*/
 
     return Scaffold(
       backgroundColor: Color.fromARGB(255, 94, 128, 186),
@@ -41,8 +45,8 @@ class _LeadersDetailPageState extends State<LeadersDetailPage> {
                     children: [
                       Column(
                         children: [
-                          Image.asset(
-                            leader['image'] ?? 'assets/drawable/person.jpg',
+                          Image.network(
+                            getImageURL("LeaderImages", leader['image'] ?? "..."),
                             width: double.infinity,
                             height: 250,
                             fit: BoxFit.contain,
@@ -87,7 +91,7 @@ class _LeadersDetailPageState extends State<LeadersDetailPage> {
                             icon: const Icon(Icons.share, color: Colors.black),
                             onPressed: () {
                               Share.share(
-                                "Check out ${leader['name']}, ${leader['role']} (NRM)",
+                                "Check out ${leader['name']}, ${leader['position']} (NRM)",
                               );
                             },
                           ),
@@ -123,8 +127,8 @@ class _LeadersDetailPageState extends State<LeadersDetailPage> {
                     ),
                     const Divider(color: Color.fromARGB(255, 94, 128, 186)),
                     const SizedBox(height: 6),
-                    const Text(
-                      "Will be provided later",
+                    Text(
+                      leader['about'] ?? "...",
                       style: TextStyle(fontSize: 15, color: Colors.grey),
                     ),
                     const SizedBox(height: 20),
@@ -145,7 +149,7 @@ class _LeadersDetailPageState extends State<LeadersDetailPage> {
                         Icon(Icons.phone, color: Colors.black),
                         SizedBox(width: 10),
                         Text(
-                          "Will be provided later",
+                          "...",
                           style: TextStyle(fontSize: 15, color: Colors.grey),
                         ),
                       ],
@@ -158,7 +162,7 @@ class _LeadersDetailPageState extends State<LeadersDetailPage> {
                         Icon(Icons.email, color: Colors.black),
                         SizedBox(width: 10),
                         Text(
-                          "Will be provided later",
+                          "...",
                           style: TextStyle(fontSize: 15, color: Colors.grey),
                         ),
                       ],
