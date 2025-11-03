@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../Utils/Constants.dart';
+import '../../Utils/Helper.dart';
+
 class RDCsPage extends StatefulWidget {
   const RDCsPage({super.key});
 
@@ -12,53 +15,47 @@ class _RDCsPageState extends State<RDCsPage> {
   String _activeCategory = 'RDC';
   final TextEditingController _searchController = TextEditingController();
 
-  // Demo data
-  final List<Map<String, String>> demoData = [
-    {
-      'name': 'John Doe',
-      'title': 'RDC',
-      'station': 'Kampala',
-      'telephone': '+256701234567',
-    },
-    {
-      'name': 'Jane Smith',
-      'title': 'RDC',
-      'station': 'Gulu',
-      'telephone': '+256701234568',
-    },
-    {
-      'name': 'Peter Okello',
-      'title': 'DRDC',
-      'station': 'Mbale',
-      'telephone': '+256701234569',
-    },
-    {
-      'name': 'Grace Namanya',
-      'title': 'DRDC',
-      'station': 'Mbarara',
-      'telephone': '+256701234570',
-    },
-  ];
+
+
+  @override
+  void initState() {
+    super.initState();
+    getRdc();
+  }
+
+  var rdcs = [];
+  var _loaderRdcs = false;
+  getRdc(){
+    requestAPI(getApiURL("get_district_commissioners.php"), {"":""}, (loader){
+      setState(() {
+        _loaderRdcs = loader;
+      });
+    }, (response){
+      customLog(response);
+      setState(() {
+        rdcs = response;
+      });
+    }, (error){
+      customLog(error);
+    },method: "GET");
+  }
+
+
+
 
   Future<void> _launchPhone(String phoneNumber) async {
     final Uri uri = Uri(scheme: 'tel', path: phoneNumber);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('Cannot launch phone app')));
-    }
+    await launchUrl(uri);
   }
 
   @override
   Widget build(BuildContext context) {
     // Filter data based on active category
-    List<Map<String, String>> filteredData =
-        demoData
+    var filteredData =
+        rdcs
             .where(
               (e) =>
-                  e['title'] == _activeCategory &&
+                  e['category'] == _activeCategory &&
                   (e['name']!.toLowerCase().contains(
                         _searchController.text.toLowerCase(),
                       ) ||
@@ -109,10 +106,22 @@ class _RDCsPageState extends State<RDCsPage> {
 
             // List of people
             Expanded(
-              child: ListView.builder(
+              child:
+                  _loaderRdcs ? Center(child: bossBaseLoader()) :
+              ListView.builder(
                 itemCount: filteredData.length,
                 itemBuilder: (context, index) {
                   final person = filteredData[index];
+
+                  /*{
+I/flutter ( 9113): │ 🐛     "category_id": "1",
+I/flutter ( 9113): │ 🐛     "name": "Akiror Mary Grace",
+I/flutter ( 9113): │ 🐛     "title": "Team Member, RDC'S SEC",
+I/flutter ( 9113): │ 🐛     "station": "RDC SECRETARAIT",
+I/flutter ( 9113): │ 🐛     "mobile": "0772847226",
+I/flutter ( 9113): │ 🐛     "category": "RDC"
+I/flutter ( 9113): │ 🐛   },*/
+
                   return Container(
                     margin: const EdgeInsets.symmetric(vertical: 6),
 
@@ -160,7 +169,7 @@ class _RDCsPageState extends State<RDCsPage> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                person['name']!,
+                                person['name'] ?? "...",
                                 style: const TextStyle(
                                   fontWeight: FontWeight.bold,
                                   fontSize: 16,
@@ -168,7 +177,7 @@ class _RDCsPageState extends State<RDCsPage> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                'Title: ${person['title']!}',
+                                'Title: ${person['title'] ?? "..."}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.black,
@@ -176,7 +185,7 @@ class _RDCsPageState extends State<RDCsPage> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                'Station: ${person['station']!}',
+                                'Station: ${person['station'] ?? "..."}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.black,
@@ -184,7 +193,7 @@ class _RDCsPageState extends State<RDCsPage> {
                               ),
                               const SizedBox(height: 2),
                               Text(
-                                'Tel: ${person['telephone']!}',
+                                'Tel: ${person['mobile'] ?? "..."}',
                                 style: TextStyle(
                                   fontSize: 14,
                                   color: Colors.black,
@@ -203,7 +212,7 @@ class _RDCsPageState extends State<RDCsPage> {
                             Icons.phone,
                             color: Color.fromARGB(255, 94, 128, 186),
                           ),
-                          onPressed: () => _launchPhone(person['telephone']!),
+                          onPressed: () => _launchPhone(person['mobile']!),
                         ),
                       ],
                     ),
