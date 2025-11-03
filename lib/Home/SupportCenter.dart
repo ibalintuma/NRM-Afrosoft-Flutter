@@ -153,11 +153,17 @@ class _SupportCenterState extends State<SupportCenter> {
                                 color: Color(0xFFFFD401),
                               ),
                             ),
-                            _supportOption(
-                              imagePath:
-                                  "assets/drawable/icons8_direct_call_100.png",
-                              label: "Call NRM Office",
-                              color: Color(0xFFFFD401),
+                            GestureDetector(
+                              onTap: () async {
+                                final Uri uri = Uri(scheme: 'tel', path: "0800337337");
+                                await launchUrl(uri);
+                              },
+                              child: _supportOption(
+                                imagePath:
+                                    "assets/drawable/icons8_direct_call_100.png",
+                                label: "Call NRM Office",
+                                color: Color(0xFFFFD401),
+                              ),
                             ),
                             GestureDetector(
                               onTap:
@@ -173,12 +179,18 @@ class _SupportCenterState extends State<SupportCenter> {
                                 color: Color(0xFFFFD401),
                               ),
                             ),
-
-                            _supportOption(
-                              imagePath:
-                                  "assets/drawable/icons8_sms_chat_100.png",
-                              label: "SMS NRM",
-                              color: Color(0xFFFFD401),
+                            GestureDetector(
+                              onTap: (){
+                                //0800337337
+                                final Uri uri = Uri(scheme: 'sms', path: "0800337337");
+                                launchUrl(uri);
+                              },
+                              child: _supportOption(
+                                imagePath:
+                                    "assets/drawable/icons8_sms_chat_100.png",
+                                label: "SMS NRM",
+                                color: Color(0xFFFFD401),
+                              ),
                             ),
                             _supportOption(
                               imagePath:
