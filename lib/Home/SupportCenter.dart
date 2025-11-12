@@ -3,6 +3,9 @@ import 'package:nrm_afrosoft_flutter/Home/AIChatPage.dart';
 
 import 'package:url_launcher/url_launcher.dart';
 
+import '../Utils/Constants.dart';
+import '../Utils/Helper.dart';
+
 class SupportCenter extends StatefulWidget {
   const SupportCenter({super.key});
 
@@ -16,16 +19,49 @@ class _SupportCenterState extends State<SupportCenter> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _messageController = TextEditingController();
 
+
+  var _loadingData = false;
+
   void _sendMessage() {
     if (_formKey.currentState!.validate()) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Message sent successfully!')),
       );
 
-      // You can integrate your API logic here later.
-      _nameController.clear();
-      _emailController.clear();
-      _messageController.clear();
+
+
+
+
+      //name,email,subject,message
+      requestAPI(getApiURL("api/ask_nrms"), {
+        "name": _nameController.text,
+        "email": _emailController.text,
+        "message": _messageController.text,
+      }, (loading){
+        setState(() {
+          _loadingData = loading;
+        });
+      }, (response){
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Message sent successfully!")),
+        );
+
+        // You can integrate your API logic here later.
+        _nameController.clear();
+        _emailController.clear();
+        _messageController.clear();
+
+      }, (error){
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Caution; failed to submit')),
+        );
+      }, method: "POST");
+
+
+
+
+
+
     }
   }
 
@@ -469,6 +505,13 @@ class _SupportCenterState extends State<SupportCenter> {
                               },
                             ),
                             const SizedBox(height: 20),
+
+                            if (_loadingData)
+                              Center(child: Padding(
+                                padding: const EdgeInsets.all(30.0),
+                                child: bossBaseLoader(),
+                              )),
+
 
                             // Send Button
                             SizedBox(

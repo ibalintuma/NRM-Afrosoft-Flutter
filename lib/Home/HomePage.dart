@@ -4,6 +4,7 @@ import 'package:nrm_afrosoft_flutter/Community/CommunityPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/FlagBearersPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/PostPosterPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/SupportCenter.dart';
+import 'package:nrm_afrosoft_flutter/Home/TabWidgets/About%20Nrm%20Pages/JoinNRMPage.dart';
 import 'package:nrm_afrosoft_flutter/Utils/Constants.dart';
 import 'package:nrm_afrosoft_flutter/Utils/Helper.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
@@ -238,7 +239,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const SupportCenter(),
+                            builder: (_) => const JoinNRMPage(),
                           ),
                         );
                       },
@@ -334,20 +335,45 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                                 scrollDirection: Axis.horizontal,
                                 children:
                                     _posters.map<Widget>((poster) {
-                                      return Row(
-                                        mainAxisSize: MainAxisSize.min,
-                                        children: [
-                                          Image.network(
-                                            //'assets/drawable/todwong_small.jpg',
-                                            getImageURL(
-                                              "CampaignPosters",
-                                              poster['poster'],
+                                      return GestureDetector(
+                                        onTap: (){
+                                          //url to opened poster image
+                                          String posterUrl = getImageURL(
+                                            "CampaignPosters",
+                                            poster['poster'],
+                                          );
+                                          // Show the poster in a dialog
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              content: Image.network(
+                                                posterUrl,
+                                                fit: BoxFit.cover,
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () => Navigator.pop(context),
+                                                  child: const Text('Close'),
+                                                ),
+                                              ],
                                             ),
-                                            width: 100,
-                                            fit: BoxFit.cover,
-                                          ),
-                                          const SizedBox(width: 8),
-                                        ],
+                                          );
+                                        },
+                                        child: Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            Image.network(
+                                              //'assets/drawable/todwong_small.jpg',
+                                              getImageURL(
+                                                "CampaignPosters",
+                                                poster['poster'],
+                                              ),
+                                              width: 100,
+                                              fit: BoxFit.cover,
+                                            ),
+                                            const SizedBox(width: 8),
+                                          ],
+                                        ),
                                       );
                                     }).toList(),
                               ),

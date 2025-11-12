@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:nrm_afrosoft_flutter/Utils/Constants.dart';
+import 'package:nrm_afrosoft_flutter/Utils/Helper.dart';
 
 class JoinNRMForm extends StatefulWidget {
   const JoinNRMForm({super.key});
@@ -304,6 +306,12 @@ class _JoinNRMFormState extends State<JoinNRMForm> {
               ),
               const SizedBox(height: 24),
 
+              if( _loadingData )
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: bossBaseLoader(),
+                ),
+
               // Join Button
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -312,9 +320,7 @@ class _JoinNRMFormState extends State<JoinNRMForm> {
                   child: ElevatedButton(
                     onPressed: () {
                       if (_formKey.currentState!.validate() && _agreedToTerms) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('Form submitted!')),
-                        );
+                        submitData();
                       } else if (!_agreedToTerms) {
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -348,5 +354,40 @@ class _JoinNRMFormState extends State<JoinNRMForm> {
         ),
       ),
     );
+  }
+
+  var _loadingData = false;
+  void submitData() {
+
+    //surname, first_name, phone, nin, gender, district, village, sub_county, parish, period_start_date, period_end_date, other_political_party
+    requestAPI(getApiURL("api/join_nrm/create"), {
+      "surname": _surnameController.text,
+      "first_name": _otherNameController.text,
+      "phone": _phoneController.text,
+      "nin": _ninController.text,
+      "gender": _selectedGender ?? "",
+      "district": _districtController.text,
+      "village": _villageController.text,
+      "sub_county": _subCountyController.text,
+      "parish": _parishController.text,
+      "period_start_date": _fromDateController.text,
+      "period_end_date": _toDateController.text,
+      "other_political_party": _selectedPoliticalParty ?? "",
+    }, (loading){
+      setState(() {
+        _loadingData = loading;
+      });
+    }, (response){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Form submitted!')),
+      );
+      Navigator.pop(context);
+
+    }, (error){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Caution; failed to submit')),
+      );
+    }, method: "POST");
+
   }
 }

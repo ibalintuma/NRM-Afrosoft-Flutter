@@ -1,6 +1,13 @@
+import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
+import 'dart:io';
+
+import '../Utils/Constants.dart';
+import '../Utils/Helper.dart';
 
 class PostPosterPage extends StatefulWidget {
   const PostPosterPage({super.key});
@@ -26,6 +33,7 @@ class _PostPosterPageState extends State<PostPosterPage> {
     }
   }
 
+  var _loadingData = false;
   Future<void> _postPoster() async {
     if (_selectedImage == null) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -34,15 +42,56 @@ class _PostPosterPageState extends State<PostPosterPage> {
       return;
     }
 
-    setState(() => isPosting = true);
-    await Future.delayed(const Duration(seconds: 2)); // simulate upload
-    setState(() => isPosting = false);
+    //if user is not logged in
+    var preferences = await SharedPreferences.getInstance();
+    var user = preferences.getString("user") ?? "";
+    if(!user.isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please log in to post a poster")),
+      );
+      return;
+    }
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text("Poster uploaded successfully!")),
-    );
 
-    setState(() => _selectedImage = null);
+
+
+      //poster,message,user_id
+
+    var _user = jsonDecode(user);
+    var user_id = _user["id"] ?? "";
+
+    String fileName = _selectedImage!.path.split('/').last;
+    requestAPI(getApiURL("upload_campaign_poster.php"), {
+      "poster": await MultipartFile.fromFile(_selectedImage!.path, filename: fileName),
+      "message": "no message",
+      "user_id": user_id,
+    }, (loading){
+      setState(() {
+        _loadingData = loading;
+      });
+    }, (response){
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Poster uploaded successfully!")),
+      );
+
+      setState(() => _selectedImage = null);
+
+      Navigator.pop(context);
+
+    }, (error){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Caution; failed to submit')),
+      );
+    }, method: "POST");
+
+
+
+
+
+
+
+
   }
 
   @override
@@ -111,6 +160,9 @@ class _PostPosterPageState extends State<PostPosterPage> {
             ),
 
             const SizedBox(height: 24),
+
+            if(_loadingData)
+              bossBaseLoader(),
 
             // Post Button
             SizedBox(

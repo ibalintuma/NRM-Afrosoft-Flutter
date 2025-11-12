@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../Utils/Constants.dart';
+import '../../Utils/Helper.dart';
+
 class AskPage extends StatefulWidget {
   const AskPage({super.key});
 
@@ -23,12 +26,39 @@ class _AskPageState extends State<AskPage> {
     super.dispose();
   }
 
-  void _sendMessage() {
-    if (_formKey.currentState!.validate()) {
-      // Handle sending message
+
+  var _loadingData = false;
+  void submitData() {
+
+    //name,email,subject,message
+    requestAPI(getApiURL("api/ask_the_presidents"), {
+      "name": _nameController.text,
+      "email": _emailController.text,
+      "subject": _subjectController.text,
+      "message": _messageController.text,
+    }, (loading){
+      setState(() {
+        _loadingData = loading;
+      });
+    }, (response){
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("Message sent successfully!")),
       );
+      Navigator.pop(context);
+
+    }, (error){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Caution; failed to submit')),
+      );
+    }, method: "POST");
+
+  }
+
+  void _sendMessage() {
+    if (_formKey.currentState!.validate()) {
+      // Handle sending message
+
+      submitData();
     }
   }
 
@@ -119,6 +149,12 @@ class _AskPageState extends State<AskPage> {
                             : null,
               ),
               const SizedBox(height: 24),
+
+              if (_loadingData)
+                Center(child: Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: bossBaseLoader(),
+                )),
 
               // Send Message button
               SizedBox(

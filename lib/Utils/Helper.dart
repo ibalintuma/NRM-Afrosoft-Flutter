@@ -14,9 +14,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:intl/intl.dart';
 import 'package:logger/logger.dart';
 
-var DOMAIN  = "https://shule.artytechcreators.com/";
-var APP_URL_BASE  = "https://shule.artytechcreators.com/api/";
-var APP_URL_FILE  = "https://shule.artytechcreators.com/images/";
+var DOMAIN  = "https://nrm.afrosoftug.com/";
+var APP_URL_BASE  = "https://nrm.afrosoftug.com/api/";
+var APP_URL_FILE  = "https://nrm.afrosoftug.com/images/";
 
 const appBackground = Color(0xFFFBFBFB);
 const blackColor = Color(0xFF000000);
