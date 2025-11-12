@@ -3,6 +3,8 @@ import 'dart:async';
 
 import 'package:nrm_afrosoft_flutter/Authentication/LoginPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/HomePage.dart';
+import 'package:nrm_afrosoft_flutter/Home/TabWidgets/About%20Nrm%20Pages/PrivacyPolicyPage.dart';
+import 'package:nrm_afrosoft_flutter/Home/TabWidgets/About%20Nrm%20Pages/TermsOfUsePage.dart';
 import 'package:nrm_afrosoft_flutter/Utils/Helper.dart';
 
 import 'RegisterPage.dart';
@@ -233,21 +235,41 @@ class _WelcomePageState extends State<WelcomePage>
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: const [
-                    Text(
-                      'Terms and Conditions',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                        decoration: TextDecoration.underline,
+                  children: [
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const TermsOfUsePage(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Terms and Conditions',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
-                    Text(
-                      'Privacy Policy',
-                      style: TextStyle(
-                        color: Colors.white70,
-                        fontSize: 14,
-                        decoration: TextDecoration.underline,
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => const PrivacyPolicyPage(),
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Privacy Policy',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 14,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
                   ],
