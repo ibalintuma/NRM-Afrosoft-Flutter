@@ -18,29 +18,26 @@ class _LiveTVWidgetState extends State<LiveTVWidget> {
 
   var _loading = false;
   var streaming_data;
+  bool _isDisposed = false;
 
-  retrieveData(){
-    requestAPI(getApiURL("get_streaming_data.php"), {"":""}, (loading){setState(() {
-      _loading = loading;
-    });}, (response){
-      print("Start");
-
-
+  retrieveData() {
+    requestAPI(getApiURL("get_streaming_data.php"), {"":""}, (loading) {
+      if (!_isDisposed && mounted) {
+        setState(() {
+          _loading = loading;
+        });
+      }
+    }, (response) {
       streaming_data = response;
-      //{id: 15, category_id: 1, streaming_link: hwW8PQlVrMk, secure_stream: null, status: 1}
-      //category_id 1 = youtube = with video id, or full link in streaming_link
-      //category_id 2 = video file link
-      if(streaming_data['category_id'] == "1") {
-
+      // {id: 15, category_id: 1, streaming_link: hwW8PQlVrMk, secure_stream: null, status: 1}
+      // category_id 1 = youtube = with video id, or full link in streaming_link
+      // category_id 2 = video file link
+      if (streaming_data['category_id'] == "1") {
         var sl = streaming_data['streaming_link'];
-        if(!sl.startsWith("http")){
+        if (!sl.startsWith("http")) {
           sl = "https://www.youtube.com/watch?v=${streaming_data['streaming_link']}";
         }
-
-        print(sl);
         final videoId = YoutubePlayer.convertUrlToId(sl)!;
-        print(videoId);
-
         _youtubeController = YoutubePlayerController(
           initialVideoId: videoId,
           flags: const YoutubePlayerFlags(
@@ -51,21 +48,28 @@ class _LiveTVWidgetState extends State<LiveTVWidget> {
             forceHD: true,
           ),
         );
-      }
-      else if(streaming_data['category_id'] == "2") {
+      } else {
         // Handle direct video link
         _videoController = VideoPlayerController.networkUrl(
           Uri.parse(streaming_data['streaming_link']),
-        )..initialize().then((_) {
-          setState(() {}); // Refresh UI when video is initialized
-        }).catchError((error) {
-          customLog('Error initializing video: $error');
-        });
+        )
+          ..initialize().then((_) {
+            if (!_isDisposed && mounted) {
+              setState(() {
+                _videoController?.play();
+              });
+            }
+          }).catchError((error) {
+            if (!_isDisposed && mounted) {
+              customLog('Error initializing video: $error');
+            }
+          });
       }
-
-      setState(() {});
+      if (!_isDisposed && mounted) {
+        setState(() {});
+      }
       customLog(streaming_data);
-    }, (error){}, method: "GET");
+    }, (error) {}, method: "GET");
   }
 
   @override
@@ -76,6 +80,7 @@ class _LiveTVWidgetState extends State<LiveTVWidget> {
 
   @override
   void dispose() {
+    _isDisposed = true;
     _youtubeController?.dispose();
     _videoController?.dispose();
     super.dispose();
@@ -153,11 +158,13 @@ class _LiveTVWidgetState extends State<LiveTVWidget> {
               color: Colors.white,
             ),
             onPressed: () {
-              setState(() {
-                _videoController!.value.isPlaying
-                    ? _videoController!.pause()
-                    : _videoController!.play();
-              });
+              if (!_isDisposed && mounted) {
+                setState(() {
+                  _videoController!.value.isPlaying
+                      ? _videoController!.pause()
+                      : _videoController!.play();
+                });
+              }
             },
           ),
           Expanded(
@@ -201,10 +208,8 @@ class _LiveTVWidgetState extends State<LiveTVWidget> {
     return '$minutes:$seconds';
   }
 
-
   @override
   Widget build(BuildContext context) {
-
     if (_loading) {
       return Center(child: bossBaseLoader());
     }
@@ -215,9 +220,11 @@ class _LiveTVWidgetState extends State<LiveTVWidget> {
 
     return SingleChildScrollView(
       padding: const EdgeInsets.all(0),
-      child: streaming_data['category_id'] == "1"
+      child: (streaming_data == null)
+          ? Container()
+          : (streaming_data['category_id'] == "1"
           ? _buildYouTubePlayer()
-          : _buildDirectVideoPlayer(),
+          : _buildDirectVideoPlayer()),
     );
   }
 }

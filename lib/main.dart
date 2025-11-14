@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gemini/flutter_gemini.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/About%20Nrm%20Pages/JoinNRMForm.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 import 'Authentication/SplashPage.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_inappwebview_android/flutter_inappwebview_android.dart';
@@ -17,9 +18,18 @@ import 'Home/TabWidgets/About Nrm Pages/TermsOfUsePage.dart';
 
 const apiKey = 'AIzaSyBTR3mfVDSrA5LY6fAPcA7nUsHqsalNxT0';
 void main() {
+  var ONESIGNAL_APP_ID = "0dab51ab-c432-4cb1-83d9-919308a16843";
+
   Gemini.init(apiKey: apiKey);
   WidgetsFlutterBinding.ensureInitialized();
-  InAppWebViewPlatform.instance = AndroidInAppWebViewPlatform();
+  //InAppWebViewPlatform.instance = AndroidInAppWebViewPlatform();
+
+
+  OneSignal.Debug.setLogLevel(OSLogLevel.verbose);
+  OneSignal.initialize(ONESIGNAL_APP_ID);
+  OneSignal.Notifications.requestPermission(true);
+
+
   runApp(const MyApp());
 }
 
