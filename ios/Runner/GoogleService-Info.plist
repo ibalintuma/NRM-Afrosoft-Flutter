@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>979558460212-0tpb062h4e7itist5t0vev1g0pcdq0rb.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.979558460212-0tpb062h4e7itist5t0vev1g0pcdq0rb</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>979558460212-244rd9h4gac4d9p9o93pd7ikbkefg6ci.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBAhLxI__TpeRxs8rP4aOv-53B4dAuXKYo</string>
+	<key>GCM_SENDER_ID</key>
+	<string>979558460212</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.afrosoft.nrmAfrosoftFlutter.RunnerTests</string>
+	<key>PROJECT_ID</key>
+	<string>nrmfirebaseproject</string>
+	<key>STORAGE_BUCKET</key>
+	<string>nrmfirebaseproject.firebasestorage.app</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:979558460212:ios:2d445d180765cd0f141361</string>
+	<key>DATABASE_URL</key>
+	<string>https://nrmfirebaseproject.firebaseio.com</string>
+</dict>
+</plist>
