@@ -275,7 +275,7 @@ class _RegisterPageState extends State<RegisterPage>
 
               // Positioned registration container
               Positioned(
-                top: 170,
+                top: 80,
                 left: 24,
                 right: 24,
                 child: Container(
@@ -500,29 +500,19 @@ class _RegisterPageState extends State<RegisterPage>
                       ),
                       const SizedBox(height: 16),
 
-                      // Already have an account?
-                      const Center(
-                        child: Text(
-                          'Already have an account?',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-
-                      // Login button
-                      Center(
-                        child: TextButton(
-                          onPressed: loadingSignUp ? null : _goToLogin,
-                          child: const Text(
-                            'Login',
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueAccent,
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.yellow,
+                              shape: BoxShape.circle,
                             ),
-                          ),
-                        ),
-                      ),
+                            padding: const EdgeInsets.all(10),
+                            child: Icon(Icons.arrow_back_ios_new_rounded, size: 26,)),
+                      )
+
                     ],
                   ),
                 ),

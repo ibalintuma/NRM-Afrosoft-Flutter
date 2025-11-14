@@ -6,6 +6,8 @@ import 'package:nrm_afrosoft_flutter/Home/HomePage.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/About%20Nrm%20Pages/PrivacyPolicyPage.dart';
 import 'package:nrm_afrosoft_flutter/Home/TabWidgets/About%20Nrm%20Pages/TermsOfUsePage.dart';
 import 'package:nrm_afrosoft_flutter/Utils/Helper.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'RegisterPage.dart';
 
@@ -143,7 +145,7 @@ class _WelcomePageState extends State<WelcomePage>
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: ElevatedButton(
                   onPressed: () {
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => LoginPage()),
                     );
@@ -193,9 +195,37 @@ class _WelcomePageState extends State<WelcomePage>
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24.0),
                 child: ElevatedButton.icon(
-                  onPressed: () {
-                    //coming soon
-                    showSnackBar(context, "Coming Soon");
+                  onPressed: () async {
+
+                    var preferences = await SharedPreferences.getInstance();
+
+                    var appleEmail = preferences.getString('apple_email') ?? '';
+                    var appleFullName = preferences.getString('apple_full_name') ?? '';
+
+                    if( appleEmail != '' ){
+                      // If Apple sign-in data exists, use it
+                      print('Using stored Apple sign-in data: $appleEmail, $appleFullName');
+                    } else {
+                      print('No stored Apple sign-in data found.');
+
+                      //coming soon
+                      final credential = await SignInWithApple.getAppleIDCredential(
+                        scopes: [
+                          AppleIDAuthorizationScopes.email,
+                          AppleIDAuthorizationScopes.fullName,
+                        ],
+                      );
+
+                      appleEmail = credential.email ?? '';
+                      appleFullName = '${credential.givenName ?? ''} ${credential.familyName ?? ''}' .trim();
+
+                      preferences.setString('apple_email', appleEmail);
+                      preferences.setString('apple_full_name', appleFullName);
+
+                      print(credential);
+                      //AuthorizationCredentialAppleID(000981.07a8249bc35241d9b9567a568d29c031.0810, null, null, null, [identityToken set: true], null)
+
+                    }
                   },
                   icon: const Text(
                     'G',
@@ -206,7 +236,7 @@ class _WelcomePageState extends State<WelcomePage>
                     ),
                   ),
                   label: const Text(
-                    'Continue with Google',
+                    'Continue with Apple',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

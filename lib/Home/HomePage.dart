@@ -564,6 +564,7 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
         });
       },
       (response) {
+        /*{"data":[{"id":"4","image":"https:\/\/nrm.afrosoftug.com\/banners\/1752491314.jpg","title":null,"created_at":"2025-07-14 11:08:34"},{"id":"11","image":"https:\/\/nrm.afrosoftug.com\/banners\/1755882026.jpg","title":null,"created_at":"2025-08-22 17:00:26"},{"id":"14","image":"https:\/\/nrm.afrosoftug.com\/banners\/1757319742.jpg","title":null,"created_at":"2025-09-08 08:22:22"},{"id":"15","image":"https:\/\/nrm.afrosoftug.com\/banners\/1761978538.jpg","title":null,"created_at":"2025-11-01 06:28:58"},{"id":"16","image":"https:\/\/nrm.afrosoftug.com\/banners\/1762590357.jpg","title":null,"created_at":"2025-11-08 08:25:57"},{"id":"17","image":"https:\/\/nrm.afrosoftug.com\/banners\/1762590430.jpg","title":null,"created_at":"2025-11-08 08:27:10"},{"id":"18","image":"https:\/\/nrm.afrosoftug.com\/banners\/1762590494.jpg","title":null,"created_at":"2025-11-08 08:28:14"},{"id":"19","image":"https:\/\/nrm.afrosoftug.com\/banners\/1762590831.jpg","title":null,"created_at":"2025-11-08 08:33:51"}]}*/
         setState(() {
           _sliderImages = response["data"];
           carouselImages =

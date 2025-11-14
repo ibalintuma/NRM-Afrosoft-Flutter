@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 
+import '../../../Utils/Constants.dart';
+import '../../../Utils/Helper.dart';
+
 class GSQuestionsPage extends StatefulWidget {
   const GSQuestionsPage({super.key});
 
@@ -10,19 +13,53 @@ class GSQuestionsPage extends StatefulWidget {
 class _GSQuestionsPageState extends State<GSQuestionsPage> {
   final TextEditingController _questionController = TextEditingController();
 
-  // Demo data
-  final List<Map<String, String>> demoQA = [
-    {
-      "question": "What is the main objective of the NRM government?",
-      "answer":
-          "The main objective is to ensure socio-economic transformation and inclusive development for all Ugandans.",
-    },
-    {
-      "question": "How can citizens participate in NRM programs?",
-      "answer":
-          "Citizens can participate by joining local committees, attending community meetings, and engaging in national dialogues.",
-    },
-  ];
+
+  @override
+  void initState() {
+    super.initState();
+    getPeople();
+  }
+
+
+  //post_question.php
+
+
+  var _loading = false;
+  List<dynamic> question_and_answers = [];
+  getPeople(){
+    requestAPI(getApiURL("retrieve_questions_and_answers.php"), {"":""}, (loading){setState(() {
+      _loading = loading;
+    });}, (response){
+      setState(() {
+        question_and_answers = response;
+
+      });
+    }, (error){}, method: "GET");
+  }
+
+
+  sendQuestion(){
+    if(_questionController.text.trim().isEmpty){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter a question")),
+      );
+      return;
+    }
+
+    requestAPI(getApiURL("post_question.php"), {"question":_questionController.text.trim()}, (loading){setState(() {
+      _loading = loading;
+    });}, (response){
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Question submitted successfully")),
+      );
+      _questionController.clear();
+      getPeople();
+    }, (error){
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error: $error")),
+      );
+    }, method: "POST");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -65,10 +102,8 @@ class _GSQuestionsPageState extends State<GSQuestionsPage> {
                 GestureDetector(
                   onTap: () {
                     // Later handle sending to API
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Question sent!")),
-                    );
-                    _questionController.clear();
+                    sendQuestion();
+                    //_questionController.clear();
                   },
                   child: Container(
                     padding: const EdgeInsets.all(10),
@@ -100,12 +135,17 @@ class _GSQuestionsPageState extends State<GSQuestionsPage> {
 
             const SizedBox(height: 8),
 
+            if (_loading)
+              const Center(
+                child: CircularProgressIndicator(),
+              ),
+
             // Q&A List
             Expanded(
               child: ListView.builder(
-                itemCount: demoQA.length,
+                itemCount: question_and_answers.length,
                 itemBuilder: (context, index) {
-                  final qa = demoQA[index];
+                  final qa = question_and_answers[index];
                   return Card(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
@@ -119,6 +159,7 @@ class _GSQuestionsPageState extends State<GSQuestionsPage> {
                           fontWeight: FontWeight.w600,
                           fontSize: 15,
                         ),
+
                       ),
                       children: [
                         Padding(

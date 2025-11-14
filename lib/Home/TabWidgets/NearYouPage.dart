@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:nrm_afrosoft_flutter/Utils/Constants.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../../Utils/Helper.dart';
 
 class NearYouPage extends StatefulWidget {
   const NearYouPage({super.key});
@@ -9,139 +13,181 @@ class NearYouPage extends StatefulWidget {
 
 class _NearYouPageState extends State<NearYouPage> {
   @override
+  void initState() {
+    super.initState();
+    getPeople();
+  }
+
+  var _loading = false;
+  List<dynamic> people = [];
+  getPeople(){
+    requestAPI(getApiURL("api/nrm_offices"), {"districtoo":"Wakiso"}, (loading){setState(() {
+      _loading = loading;
+    });}, (response){
+      setState(() {
+        people = response;
+
+      });
+    }, (error){}, method: "GET");
+  }
+
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // No AppBar
-      body: Stack(
-        children: [
-          // Background placeholder (to be replaced by Google Maps later)
-          Container(color: Colors.white),
-
-          // Header section
-          SafeArea(
+      appBar: AppBar(
+        iconTheme: const IconThemeData(color: Colors.black),
+        title: const Text(
+          "NRM Near You",
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+        ),
+        backgroundColor: const Color(0xFFFFD401),
+        elevation: 1,
+      ),
+      body: _loading
+          ? const Center(child: CircularProgressIndicator())
+          : people.isEmpty
+          ? const Center(
+        child: Text(
+          "contacts available",
+          style: TextStyle(fontSize: 16, color: Colors.grey),
+        ),
+      )
+          : ListView.builder(
+        itemCount: people.length,
+        padding: const EdgeInsets.all(16),
+        itemBuilder: (context, index) {
+          final person = people[index];
+          final latitude = person['latitude'];
+          final longitude = person['longitude'];
+          return Card(
+            margin: const EdgeInsets.only(bottom: 12),
+            elevation: 2,
             child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(color: Color(0xFFFFD401)),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    const Text(
-                      "NRM Near You",
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+              padding: const EdgeInsets.all(12),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 30,
+                        backgroundImage: person['picture'] != null
+                            ? NetworkImage(person['picture'])
+                            : null,
+                        child: person['picture'] == null
+                            ? Text(
+                          person['address']?[0]?.toUpperCase() ?? '?',
+                          style: const TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        )
+                            : null,
                       ),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.search, color: Colors.black),
-                      onPressed: () {
-                        // TODO: handle search tap
-                      },
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              person['address'] ?? 'Unknown',
+                              style: const TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            const SizedBox(height: 4),
+                            Text(
+                              person['phone'] ?? 'No phone',
+                              style: const TextStyle(
+                                fontSize: 14,
+                                color: Colors.grey,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  Row(
+                    children: [
+                      const Icon(Icons.location_on, size: 16, color: Colors.grey),
+                      const SizedBox(width: 4),
+                      Expanded(
+                        child: Text(
+                          "${person['district'] ?? 'Unknown'}",
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (person['email'] != null) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      children: [
+                        const Icon(Icons.email, size: 16, color: Colors.grey),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            person['email'],
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                        ),
+                      ],
                     ),
                   ],
-                ),
+
+                  const SizedBox(height: 12),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          final mapUrl = "https://www.google.com/maps/search/?api=1&query=$latitude,$longitude";
+                          launchUrl(Uri.parse(mapUrl));
+                        },
+                        icon: const Icon(Icons.location_on_rounded, size: 18),
+                        label: const Text('Map'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.blue,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      OutlinedButton.icon(
+                        onPressed: () {
+                          final phone = person['phone'] ?? '';
+                          final whatsappUrl = "https://wa.me/${phone.replaceAll(' ', '').replaceAll('+', '')}";
+                          launchUrl(Uri.parse(whatsappUrl));
+                        },
+                        icon: const Icon(Icons.chat, size: 18),
+                        label: const Text('Chat'),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.blue,
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      ElevatedButton.icon(
+                        onPressed: () {
+                          final phone = person['phone'] ?? '';
+                          final telUrl = "tel:$phone";
+                          launchUrl(Uri.parse(telUrl));
+                        },
+                        icon: const Icon(Icons.phone, size: 18),
+                        label: const Text('Call'),
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.green,
+                          foregroundColor: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-          ),
-
-          // Draggable bottom sheet
-          DraggableScrollableSheet(
-            initialChildSize: 0.35,
-            minChildSize: 0.25,
-            maxChildSize: 0.6,
-            builder: (context, scrollController) {
-              return Container(
-                decoration: const BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black26,
-                      blurRadius: 6,
-                      offset: Offset(0, -2),
-                    ),
-                  ],
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 12,
-                ),
-                child: ListView(
-                  controller: scrollController,
-                  children: [
-                    Center(
-                      child: Container(
-                        width: 40,
-                        height: 4,
-                        margin: const EdgeInsets.only(bottom: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.grey[400],
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                      ),
-                    ),
-                    const Text(
-                      'The Office of the NRM National Chairman Kyambogo',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 8),
-                    const Divider(),
-                    const Text(
-                      'Contact Info',
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const Divider(),
-                    const SizedBox(height: 6),
-                    Row(
-                      children: const [
-                        Icon(Icons.location_on, color: Colors.green),
-                        SizedBox(width: 8),
-                        Text('Kampala', style: TextStyle(fontSize: 15)),
-                      ],
-                    ),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: const [
-                        Icon(Icons.call, color: Colors.green),
-                        SizedBox(width: 8),
-                        Text('Unknown', style: TextStyle(fontSize: 15)),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    Center(
-                      child: Container(
-                        padding: const EdgeInsets.all(12),
-                        decoration: const BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.green,
-                        ),
-                        child: const Icon(
-                          Icons.email,
-                          color: Colors.white,
-                          size: 24,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
-                ),
-              );
-            },
-          ),
-        ],
+          );
+        },
       ),
     );
   }

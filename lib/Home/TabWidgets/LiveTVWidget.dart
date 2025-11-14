@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
+import 'package:video_player/video_player.dart';
+
+import '../../Utils/Constants.dart';
+import '../../Utils/Helper.dart';
 
 class LiveTVWidget extends StatefulWidget {
   const LiveTVWidget({super.key});
@@ -9,39 +13,82 @@ class LiveTVWidget extends StatefulWidget {
 }
 
 class _LiveTVWidgetState extends State<LiveTVWidget> {
-  late YoutubePlayerController _controller;
+  YoutubePlayerController? _youtubeController;
+  VideoPlayerController? _videoController;
+
+  var _loading = false;
+  var streaming_data;
+
+  retrieveData(){
+    requestAPI(getApiURL("get_streaming_data.php"), {"":""}, (loading){setState(() {
+      _loading = loading;
+    });}, (response){
+      print("Start");
+
+
+      streaming_data = response;
+      //{id: 15, category_id: 1, streaming_link: hwW8PQlVrMk, secure_stream: null, status: 1}
+      //category_id 1 = youtube = with video id, or full link in streaming_link
+      //category_id 2 = video file link
+      if(streaming_data['category_id'] == "1") {
+
+        var sl = streaming_data['streaming_link'];
+        if(!sl.startsWith("http")){
+          sl = "https://www.youtube.com/watch?v=${streaming_data['streaming_link']}";
+        }
+
+        print(sl);
+        final videoId = YoutubePlayer.convertUrlToId(sl)!;
+        print(videoId);
+
+        _youtubeController = YoutubePlayerController(
+          initialVideoId: videoId,
+          flags: const YoutubePlayerFlags(
+            autoPlay: true,
+            mute: false,
+            enableCaption: true,
+            controlsVisibleAtStart: true,
+            forceHD: true,
+          ),
+        );
+      }
+      else if(streaming_data['category_id'] == "2") {
+        // Handle direct video link
+        _videoController = VideoPlayerController.networkUrl(
+          Uri.parse(streaming_data['streaming_link']),
+        )..initialize().then((_) {
+          setState(() {}); // Refresh UI when video is initialized
+        }).catchError((error) {
+          customLog('Error initializing video: $error');
+        });
+      }
+
+      setState(() {});
+      customLog(streaming_data);
+    }, (error){}, method: "GET");
+  }
 
   @override
   void initState() {
     super.initState();
-
-    const videoUrl =
-        "https://www.youtube.com/watch?v=ysz5S6PUM-U"; // Replace with your video
-    final videoId = YoutubePlayer.convertUrlToId(videoUrl)!;
-
-    _controller = YoutubePlayerController(
-      initialVideoId: videoId,
-      flags: const YoutubePlayerFlags(
-        autoPlay: false,
-        mute: false,
-        enableCaption: true,
-        controlsVisibleAtStart: true,
-        forceHD: true,
-      ),
-    );
+    retrieveData();
   }
 
   @override
   void dispose() {
-    _controller.dispose();
+    _youtubeController?.dispose();
+    _videoController?.dispose();
     super.dispose();
   }
 
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildYouTubePlayer() {
+    if (_youtubeController == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return YoutubePlayerBuilder(
       player: YoutubePlayer(
-        controller: _controller,
+        controller: _youtubeController!,
         showVideoProgressIndicator: true,
         progressIndicatorColor: const Color(0xFFFFD401),
         progressColors: const ProgressBarColors(
@@ -59,20 +106,118 @@ class _LiveTVWidgetState extends State<LiveTVWidget> {
         ],
       ),
       builder: (context, player) {
-        return SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              player,
-              const SizedBox(height: 20),
-              // const Text(
-              //   "NRM Live TV",
-              //   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              // ),
-            ],
-          ),
+        return Column(
+          children: [
+            player,
+            const SizedBox(height: 20),
+          ],
         );
       },
+    );
+  }
+
+  Widget _buildDirectVideoPlayer() {
+    if (_videoController == null) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (!_videoController!.value.isInitialized) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    return Column(
+      children: [
+        AspectRatio(
+          aspectRatio: _videoController!.value.aspectRatio,
+          child: Stack(
+            alignment: Alignment.bottomCenter,
+            children: [
+              VideoPlayer(_videoController!),
+              _buildVideoControls(),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+      ],
+    );
+  }
+
+  Widget _buildVideoControls() {
+    return Container(
+      color: Colors.black26,
+      child: Row(
+        children: [
+          IconButton(
+            icon: Icon(
+              _videoController!.value.isPlaying ? Icons.pause : Icons.play_arrow,
+              color: Colors.white,
+            ),
+            onPressed: () {
+              setState(() {
+                _videoController!.value.isPlaying
+                    ? _videoController!.pause()
+                    : _videoController!.play();
+              });
+            },
+          ),
+          Expanded(
+            child: VideoProgressIndicator(
+              _videoController!,
+              allowScrubbing: true,
+              colors: const VideoProgressColors(
+                playedColor: Color(0xFFFFD401),
+                bufferedColor: Colors.grey,
+                backgroundColor: Colors.white24,
+              ),
+            ),
+          ),
+          Text(
+            _formatDuration(_videoController!.value.position),
+            style: const TextStyle(color: Colors.white, fontSize: 12),
+          ),
+          const Text(
+            ' / ',
+            style: TextStyle(color: Colors.white, fontSize: 12),
+          ),
+          Text(
+            _formatDuration(_videoController!.value.duration),
+            style: const TextStyle(color: Colors.white, fontSize: 12),
+          ),
+          const SizedBox(width: 8),
+        ],
+      ),
+    );
+  }
+
+  String _formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+    final hours = twoDigits(duration.inHours);
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+
+    if (duration.inHours > 0) {
+      return '$hours:$minutes:$seconds';
+    }
+    return '$minutes:$seconds';
+  }
+
+
+  @override
+  Widget build(BuildContext context) {
+
+    if (_loading) {
+      return Center(child: bossBaseLoader());
+    }
+
+    if (streaming_data == null) {
+      return const Center(child: Text('No streaming data available'));
+    }
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(0),
+      child: streaming_data['category_id'] == "1"
+          ? _buildYouTubePlayer()
+          : _buildDirectVideoPlayer(),
     );
   }
 }

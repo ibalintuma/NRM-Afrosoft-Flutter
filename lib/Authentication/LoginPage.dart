@@ -367,13 +367,28 @@ class _LoginPageState extends State<LoginPage>
                           child: const Text(
                             'Sign Up',
                             style: TextStyle(
-                              fontSize: 20,
+                              fontSize: 16,
                               fontWeight: FontWeight.bold,
                               color: Colors.blueAccent,
                             ),
                           ),
                         ),
                       ),
+
+
+                      GestureDetector(
+                        onTap: (){
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                            decoration: BoxDecoration(
+                              color: Colors.yellow,
+                              shape: BoxShape.circle,
+                            ),
+                            padding: const EdgeInsets.all(10),
+                            child: Icon(Icons.arrow_back_ios_new_rounded, size: 26,)),
+                      )
+
                     ],
                   ),
                 ),
