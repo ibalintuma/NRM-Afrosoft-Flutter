@@ -169,9 +169,7 @@ His political awareness and ideological orientation became more focused during t
 Museveni was instrumental in forming Front for National Salvation (FRONASA), which was the core of Ugandan fighting groups that, together with the Tanzanian People’s Defence Forces, ousted Idi Amin’s regime in April 1979.
 
 On 29th January 1986, Museveni became President of the Republic of Uganda after leading a protracted five-year liberation struggle. This was a people’s resistance, with no external base, relying entirely on popular community support, to save their country from total collapse and abuse of the dignity of human life.
-
-
-''', style: TextStyle(fontSize: 16, height: 1.5)),
+''', style: TextStyle(fontSize: 16, height: 1.5, ), textAlign: TextAlign.justify,),
 
                   // Image
                   ClipRRect(

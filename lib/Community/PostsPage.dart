@@ -18,9 +18,11 @@ class PostPage extends StatefulWidget {
 class _PostPageState extends State<PostPage> {
 
 
+
   @override
   void initState() {
     super.initState();
+    print( widget.post);
     getPost();
   }
 
@@ -111,18 +113,18 @@ class _PostPageState extends State<PostPage> {
               width: 2, // border thickness
             ),
           ),
-          heroTag: 'POST',
+          heroTag: widget.post == null ? 'POST' : 'COMMENT',
           onPressed: () async {
             // Open chat screen
-            var a = await Navigator.push(context, MaterialPageRoute(builder: (context) => AddPostPage()),);
+            var a = await Navigator.push(context, MaterialPageRoute(builder: (context) => AddPostPage(post: widget.post)),);
             if (a == true) {
               getPost();
             }
           },
           backgroundColor: Colors.black,
           icon: const Icon(Icons.edit, color: Color(0xFFFFD401)),
-          label: const Text(
-            'POST',
+          label: Text(
+            widget.post == null ? 'POST' : 'COMMENT',
             style: TextStyle(
               color: Color(0xFFFFD401),
               fontWeight: FontWeight.bold,
@@ -189,7 +191,7 @@ class _PostPageState extends State<PostPage> {
 
               // Post message & image
 
-              if (post["message"] != null && !post["message"]!.isEmpty)
+
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
@@ -224,6 +226,7 @@ class _PostPageState extends State<PostPage> {
                 ),
               ),
 
+
               // Likes & Comments row
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -247,7 +250,7 @@ class _PostPageState extends State<PostPage> {
                     Row(
                       children: [
                         Text(
-                          "${post['comments_count']} Comments",
+                          "${post['comments_count'] ?? "..."} Comments",
                           style: const TextStyle(fontSize: 12),
                         ),
                       ],

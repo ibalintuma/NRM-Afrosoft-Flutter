@@ -218,7 +218,8 @@ class _LiveTVWidgetState extends State<LiveTVWidget> {
       return const Center(child: Text('No streaming data available'));
     }
 
-    return SingleChildScrollView(
+    return Container(
+      color: Colors.black,
       padding: const EdgeInsets.all(0),
       child: (streaming_data == null)
           ? Container()

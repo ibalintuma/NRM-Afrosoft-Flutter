@@ -5,6 +5,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../Utils/Constants.dart';
 import '../Utils/Helper.dart';
+import 'TabWidgets/videosdk/join_screen.dart';
 
 class SupportCenter extends StatefulWidget {
   const SupportCenter({super.key});
@@ -228,11 +229,17 @@ class _SupportCenterState extends State<SupportCenter> {
                                 color: Color(0xFFFFD401),
                               ),
                             ),
-                            _supportOption(
-                              imagePath:
-                                  "assets/drawable/icons8_video_chat_100.png",
-                              label: "Video Chat",
-                              color: Color(0xFFFFD401),
+                            GestureDetector(
+                              onTap: () {
+                                // Here you could integrate with Zoom/Meet or use a placeholder
+                                Navigator.push(context, MaterialPageRoute(builder: (context) => JoinScreen() ) );
+                              },
+                              child: _supportOption(
+                                imagePath:
+                                    "assets/drawable/icons8_video_chat_100.png",
+                                label: "Video Chat",
+                                color: Color(0xFFFFD401),
+                              ),
                             ),
                           ],
                         ),

@@ -10,7 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dio/dio.dart';
 
 class AddPostPage extends StatefulWidget {
-  const AddPostPage({super.key});
+
+  dynamic post;
+  AddPostPage({super.key, this.post});
 
   @override
   State<AddPostPage> createState() => _AddPostPageState();
@@ -73,33 +75,65 @@ class _AddPostPageState extends State<AddPostPage> {
     var user_id = _user["id"] ?? "";
     var message = _messageController.text.trim();
 
-    requestAPI(
-      getApiURL("upload_community_post.php"),
-      {
-        "user_id": user_id,
-        "message": message,
-        if (_selectedImage != null)
-          'picture': await MultipartFile.fromFile( _selectedImage!.path , filename: "picture.jpg", ),
-        if (_selectedVideo != null)
-          'video': await MultipartFile.fromFile( _selectedVideo!.path , filename: "video.mp4", ),
-        //"video": "",
-        //"picture": "",
-      },
-          (loading) {
-        setState(() {
-          _loadingSubmit = loading;
-        });
-        }, (response) {
-          if( response["code"] == 1){
-            Navigator.pop(context, true);
-          } else {
+    print("objectuuu = $user_id");
 
-          }
-        }, (error) {
-          print("error");
+    if ( widget.post == null) {
+      //new post
+      print("posting...");
+      requestAPI(
+        getApiURL("upload_community_post.php"),
+        {
+          "user_id": user_id,
+          "message": message,
+          if (_selectedImage != null)
+            'picture': await MultipartFile.fromFile(
+              _selectedImage!.path, filename: "picture.jpg",),
+          if (_selectedVideo != null)
+            'video': await MultipartFile.fromFile(
+              _selectedVideo!.path, filename: "video.mp4",),
+          //"video": "",
+          //"picture": "",
         },
-      method: "POST",
-    );
+            (loading) {
+          setState(() {
+            _loadingSubmit = loading;
+          });
+        }, (response) {
+        if (response["code"] == 1) {
+          Navigator.pop(context, true);
+        } else {
+
+        }
+      }, (error) {
+        print("error");
+      },
+        method: "POST",
+      );
+    } else {
+      //comment
+      print("commenting...");
+
+      requestAPI(
+        getApiURL("comment_to_post.php"),
+        {
+          "user_id": user_id,
+          "post_id": widget.post["id"].toString(),
+          "comment": message,
+        },
+            (loading) {
+          setState(() {
+            _loadingSubmit = loading;
+          });
+        }, (response) {
+          print(response);
+        Navigator.pop(context, true);
+      }, (error) {
+        Navigator.pop(context, true);
+        print("error");
+      },
+        method: "POST",
+      );
+    }
 
   }
 
@@ -115,8 +149,8 @@ class _AddPostPageState extends State<AddPostPage> {
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
         iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text(
-          "Create Post",
+        title: Text(
+          widget.post == null ? "Create Post" : "Add Comment",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         backgroundColor: const Color(0xFFFFD401),
@@ -247,6 +281,7 @@ class _AddPostPageState extends State<AddPostPage> {
               const Spacer(),
 
               // Add Photo / Video row
+              if( widget.post == null)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [

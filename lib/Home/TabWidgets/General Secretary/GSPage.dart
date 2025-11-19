@@ -108,19 +108,11 @@ class _GSPageState extends State<GSPage> {
                   const SizedBox(height: 12),
 
                   // Text content
-                  const Text('''
-Richard Todwong is a Ugandan born on 24 November 1973 and raised in Anaka, Nwoya District. Currently serving as the Secretary-General (SG) of the National Resistance Movement (NRM) and executive team leader of the secretariat. He holds a bachelor’s degree in political science and Economics and degree of Master of Arts in International Relations (M.A.Int.Rel.) from Makerere University.
-              
-               
-              ''', style: TextStyle(fontSize: 16, height: 1.5)),
+                  const Text('''Richard Todwong is a Ugandan born on 24 November 1973 and raised in Anaka, Nwoya District. Currently serving as the Secretary-General (SG) of the National Resistance Movement (NRM) and executive team leader of the secretariat. He holds a bachelor’s degree in political science and Economics and degree of Master of Arts in International Relations (M.A.Int.Rel.) from Makerere University.''', style: TextStyle(fontSize: 16, height: 1.5), textAlign: TextAlign.justify,),
                   SizedBox(height: 10),
-                  const Text('''
-He has also formerly served as the Deputy SG from 2015 to 2021 and as the Minister Without Portfolio in the Ugandan Cabinet in 2012. Richard was also elected as a Member of Parliament for Nwoya County, Nwoya District.
-              ''', style: TextStyle(fontSize: 16, height: 1.5)),
+                  const Text('''He has also formerly served as the Deputy SG from 2015 to 2021 and as the Minister Without Portfolio in the Ugandan Cabinet in 2012. Richard was also elected as a Member of Parliament for Nwoya County, Nwoya District.''', style: TextStyle(fontSize: 16, height: 1.5), textAlign: TextAlign.justify,),
                   const SizedBox(height: 16),
-                  Text('''
-With the above educational background, Richard’s career has evolved with time. For over six years, Richard worked as an economist in 1999 with the Uganda Revenue Authority and the Ministry of Justice and Constitutional Affairs. Where he later upgraded into serving in governance positions for over five years since 2006 as a Special Advisor to the President of Uganda attached to Northern Uganda among others. He is passionate about community development; he is also a seasoned community organiser and a social diplomat. 
-              ''', style: TextStyle(fontSize: 16, height: 1.5)),
+                  Text('''With the above educational background, Richard’s career has evolved with time. For over six years, Richard worked as an economist in 1999 with the Uganda Revenue Authority and the Ministry of Justice and Constitutional Affairs. Where he later upgraded into serving in governance positions for over five years since 2006 as a Special Advisor to the President of Uganda attached to Northern Uganda among others. He is passionate about community development; he is also a seasoned community organiser and a social diplomat. ''', style: TextStyle(fontSize: 16, height: 1.5), textAlign: TextAlign.justify,),
                   SizedBox(
                     width: double.infinity,
                     child: Card(
