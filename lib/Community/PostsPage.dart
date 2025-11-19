@@ -6,7 +6,10 @@ import '../Utils/Constants.dart';
 import '../Utils/Helper.dart';
 
 class PostPage extends StatefulWidget {
-  const PostPage({super.key});
+  //const PostPage({super.key});
+
+  dynamic post;
+  PostPage({super.key, this.post});
 
   @override
   State<PostPage> createState() => _PostPageState();
@@ -25,21 +28,31 @@ class _PostPageState extends State<PostPage> {
   var _loadingPost = false;
   var _posts = [];
   void getPost() {
-    requestAPI(
-      getApiURL("retrieve_community_posts.php"),
-      {"": ""},
-          (loading) {
-        setState(() {
-          _loadingPost = loading;
-        });
-      }, (response) {
+
+    if( widget.post == null) {
+      requestAPI(
+        getApiURL("retrieve_community_posts.php"),
+        {"": ""},
+            (loading) {
+          setState(() {
+            _loadingPost = loading;
+          });
+        }, (response) {
         setState(() {
           _posts = response;
         });
       },
-          (error) {},
-      method: "GET",
-    );
+            (error) {},
+        method: "GET",
+      );
+    } else {
+      setState(() {
+        _posts = widget.post["comments"];
+        print(_posts);
+        _title = "Comments";
+
+      });
+    }
   }
 
 
@@ -70,27 +83,16 @@ class _PostPageState extends State<PostPage> {
     return "";
   }
 
+  var _title = "Community";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: AppBar(
-        actions: [
-          TextButton(
-            onPressed: () {},
-            child: const Text(
-              'CREATE POST',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
         iconTheme: const IconThemeData(color: Colors.white),
-        title: const Text(
-          "Community",
+        title: Text(
+          _title,
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         backgroundColor: Color(0xFFFFD401),
@@ -139,7 +141,9 @@ class _PostPageState extends State<PostPage> {
 
         final post = _posts[index];
         //print("${ getImageURL("CommunityPostFiles",post["picture"])}");
-        print("${ getImageURL("CommunityPostFiles",post["video"])}");
+        //print("${ getImageURL("CommunityPostFiles",post["video"])}");
+
+        //{user_name: Ahimbisibwe Innocent, picture: , id: 811, comment: happy to be in our party , date: 2025-11-18 22:56:14, likes: 0}
 
         return Card(
           color: Colors.white,
@@ -147,7 +151,7 @@ class _PostPageState extends State<PostPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16),
           ),
-          elevation: 4,
+          elevation: 1,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -166,12 +170,12 @@ class _PostPageState extends State<PostPage> {
                     Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        if (post["user_name"] == null || post["user_name"]!.isEmpty)
+                          const Text("Anonymous", style: TextStyle(fontWeight: FontWeight.bold),)
+                        else
+                            Text(post["user_name"] ?? "...", style: const TextStyle(fontWeight: FontWeight.bold),),
                         Text(
-                          post["user_name"] ?? "...",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          "${post["date_time"]}",
+                          "${post["date_time"] ?? post["date"]}",
                           style: const TextStyle(
                             color: Colors.grey,
                             fontSize: 12,
@@ -184,15 +188,25 @@ class _PostPageState extends State<PostPage> {
               ),
 
               // Post message & image
+
+              if (post["message"] != null && !post["message"]!.isEmpty)
               Padding(
                 padding: const EdgeInsets.all(12.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    if (post["message"] != null && post["message"]!.isNotEmpty)
                     Text(
                       post["message"] ?? "ni",
                       style: const TextStyle(fontSize: 14),
                     ),
+
+                    if (post["comment"] != null && post["comment"]!.isNotEmpty)
+                    Text(
+                      post["comment"] ?? "ni",
+                      style: const TextStyle(fontSize: 14),
+                    ),
+
                     const SizedBox(height: 8),
                     if (post["image"] != null && post["image"]!.isNotEmpty)
                       ClipRRect(
@@ -225,19 +239,13 @@ class _PostPageState extends State<PostPage> {
                         ),
                         const SizedBox(width: 4),
                         Text(
-                          "${post['likes']} Likes",
+                          "${post['likes']}",
                           style: const TextStyle(fontSize: 12),
                         ),
                       ],
                     ),
                     Row(
                       children: [
-                        Icon(
-                          Icons.comment,
-                          size: 18,
-                          color: Colors.grey.shade700,
-                        ),
-                        const SizedBox(width: 4),
                         Text(
                           "${post['comments_count']} Comments",
                           style: const TextStyle(fontSize: 12),
@@ -252,22 +260,62 @@ class _PostPageState extends State<PostPage> {
 
               // Action buttons
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 12.0),
+                padding: const EdgeInsets.symmetric(horizontal: 6.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     TextButton.icon(
                       onPressed: () {
+                        dynamic oldLikes = post["likes"];
+                        int likes = 0;
+
+                        if (oldLikes is String) {
+                          likes = int.tryParse(oldLikes) ?? 0;
+                        } else if (oldLikes is! int) {
+                          likes = 0;
+                        }
+
+                        int newLikes = likes + 1;
+
                         setState(() {
-                          post["likes"] = (post["likes"] ?? 0) + 1;
+                          _posts[index]["likes"] = "$newLikes";
                         });
+
+
+
+
+
+                        print("objectx = ${post["id"]}");
+                        // Send like to server
+                        requestAPI(
+                          getApiURL("like_community_post.php"),
+                          {"post_id": "${post["id"]}"},
+                              (loading) {
+                            setState(() {
+                              //_loading_events = loading;
+                            });
+                          },
+                              (response) {
+                            print("event = $response");
+
+                          },
+                              (error) {
+                            print("error = $error");
+                              },
+                          method: "POST",
+                        );
+
+
+
+
+
                       },
                       icon: const Icon(Icons.thumb_up_off_alt, size: 20),
                       label: const Text("Like"),
                     ),
                     TextButton.icon(
                       onPressed: () {
-                        // TODO: Navigate to comments page
+                        Navigator.push(context, MaterialPageRoute(builder: (context) => PostPage( post: post) ) );
                       },
                       icon: const Icon(Icons.comment_outlined, size: 20),
                       label: const Text("Comment"),
@@ -286,7 +334,7 @@ class _PostPageState extends State<PostPage> {
                   ],
                 ),
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 4),
             ],
           ),
         );

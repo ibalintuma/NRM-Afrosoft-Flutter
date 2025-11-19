@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 
+import '../../Utils/Constants.dart';
+
 class AchievementsDetail extends StatefulWidget {
-  const AchievementsDetail({super.key});
+
+
+  final dynamic achievement;
+  const AchievementsDetail({super.key, this.achievement});
 
   @override
   State<AchievementsDetail> createState() => _AchievementsDetailState();
@@ -9,33 +14,20 @@ class AchievementsDetail extends StatefulWidget {
 
 class _AchievementsDetailState extends State<AchievementsDetail> {
   // Demo data for now — can later come from API
-  final List<Map<String, String>> achievements = [
-    {
-      "image": "https://picsum.photos/400/200?1",
-      "title": "Digital Transformation in Agriculture",
-      "description":
-          "Implemented a digital platform that connects farmers with markets, weather updates, and agronomist support, improving productivity across regions.",
-    },
-    {
-      "image": "https://picsum.photos/400/200?2",
-      "title": "Youth Empowerment Initiative",
-      "description":
-          "Trained over 10,000 youth in ICT and entrepreneurship skills, creating job opportunities and boosting innovation across rural communities.",
-    },
-    {
-      "image": "https://picsum.photos/400/200?3",
-      "title": "Health Access Expansion",
-      "description":
-          "Deployed mobile health applications to improve access to medical consultations and health record management in underserved areas.",
-    },
-  ];
+  var achievements = [];
+
+  @override
+  void initState() {
+    super.initState();
+    achievements = widget.achievement['achievements'] ?? [];
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.grey[100],
       appBar: AppBar(
-        title: Text(achievements[0]['title'] ?? 'Achievements'),
+        title: Text(widget.achievement['title'] ?? 'Achievements'),
         backgroundColor: Color(0xFFFFD401),
       ),
       body: ListView.builder(
@@ -58,7 +50,10 @@ class _AchievementsDetailState extends State<AchievementsDetail> {
                     top: Radius.circular(16),
                   ),
                   child: Image.network(
-                    achievement["image"]!,
+                    getImageURL(
+                      "AchievementImages",
+                      achievement["image"],
+                    ),
                     height: 180,
                     width: double.infinity,
                     fit: BoxFit.cover,
@@ -72,7 +67,7 @@ class _AchievementsDetailState extends State<AchievementsDetail> {
                     children: [
                       Center(
                         child: Text(
-                          achievement["title"]!,
+                          achievement["name"]!,
                           style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,

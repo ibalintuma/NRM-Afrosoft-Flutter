@@ -59,7 +59,7 @@ class _AchievementsWidget extends State<AchievementsWidget> {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (_) => const AchievementsDetail(),
+                              builder: (_) => AchievementsDetail( achievement : achievement),
                             ),
                           );
                         },
@@ -106,14 +106,10 @@ class _AchievementsWidget extends State<AchievementsWidget> {
                                       color: Colors.amber,
                                       shape: BoxShape.circle,
                                     ),
-                                    child: IconButton(
-                                      icon: const Icon(
-                                        Icons.arrow_forward,
-                                        color: Colors.white,
-                                      ),
-                                      onPressed: () {
-                                        // TODO: Add action here (e.g., open details)
-                                      },
+                                    padding: const EdgeInsets.all(12),
+                                    child: const Icon(
+                                      Icons.arrow_forward,
+                                      color: Colors.white,
                                     ),
                                   ),
                                 ),

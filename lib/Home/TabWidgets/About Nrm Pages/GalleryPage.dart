@@ -22,7 +22,7 @@ class _GalleryPageState extends State<GalleryPage> {
 
   Future<List<Album>> fetchAlbums() async {
     final url = Uri.parse(
-      'https://unatu.joseappstudio.com/api/albums',
+      'https://nrm.afrosoftug.com/api/albums',
     ); // Replace with your API endpoint
     ;
 
