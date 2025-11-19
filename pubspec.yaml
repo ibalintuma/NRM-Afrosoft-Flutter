@@ -44,11 +44,6 @@ dependencies:
   sign_in_with_apple: ^7.0.1
   onesignal_flutter: ^5.3.4
   firebase_messaging: ^16.0.4
-
-dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  flutter_launcher_icons: "^0.14.4"
   device_info_plus: ^11.4.0
   dio: ^5.8.0+1
   intl: ^0.20.2
@@ -64,6 +59,11 @@ dev_dependencies:
   sqflite: ^2.4.2
   path_provider: ^2.1.5
   videosdk: ^3.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_launcher_icons: "^0.14.4"
 
 flutter_launcher_icons:
   android: "launcher_icon"
