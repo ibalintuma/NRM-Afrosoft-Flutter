@@ -76,7 +76,7 @@ class _HomeTabWidgetState extends State<HomeTabWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,

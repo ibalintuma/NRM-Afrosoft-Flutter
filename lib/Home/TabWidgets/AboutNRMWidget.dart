@@ -22,8 +22,9 @@ class _AboutNRMWidgetState extends State<AboutNRMWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
+    return Container(
+      //color: Colors.red,
+      padding: const EdgeInsets.all(12),
       child: Column(
         children: [
           // Top Image
@@ -38,76 +39,87 @@ class _AboutNRMWidgetState extends State<AboutNRMWidget> {
               ),
             ),
           ),
-          const SizedBox(height: 14),
+          const SizedBox(height: 30),
 
           // Menu List
           ...menuItems.map(
-            (item) => Column(
-              children: [
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, item['route']!);
-                  },
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: 12,
-                      horizontal: 14,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black,
-                      borderRadius: BorderRadius.circular(30),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.2),
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    child: Row(
-                      children: [
-                        // Dot
-                        Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFFFD401),
-                            shape: BoxShape.circle,
-                          ),
-                        ),
-                        const SizedBox(width: 10),
-
-                        // Text
-                        Expanded(
-                          child: Text(
-                            item['title']!,
-                            style: const TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                              color: Color(0xFFFFD401),
-                            ),
-                          ),
-                        ),
-
-                        // Forward icon in colored circle
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: Color(0xFFFFD401),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            Icons.arrow_forward,
-                            color: Colors.black,
-                            size: 16,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+            (item) => GestureDetector(
+              onTap: () {
+                Navigator.pushNamed(context, item['route']!);
+              },
+              child: Container(
+                margin: EdgeInsets.only(
+                  bottom: 12,
                 ),
-                const SizedBox(height: 12),
-              ],
+                padding: const EdgeInsets.symmetric(
+                  vertical: 12,
+                  horizontal: 14,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.black,
+                  borderRadius: BorderRadius.circular(30),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.2),
+                      blurRadius: 4,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                ),
+                child: Row(
+                  children: [
+                    // Dot
+                    Container(
+                      width: 8,
+                      height: 8,
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFFFD401),
+                        shape: BoxShape.circle,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+
+                    // Text
+                    Expanded(
+                      child: Text(
+                        item['title']!,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w500,
+                          color: Color(0xFFFFD401),
+                        ),
+                      ),
+                    ),
+
+                    // Forward icon in colored circle
+                    Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: const BoxDecoration(
+                        color: Color(0xFFFFD401),
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.arrow_forward,
+                        color: Colors.black,
+                        size: 16,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+
+          Spacer(),
+          Container(
+            width: 350,
+            height: 100,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(12),
+              image: const DecorationImage(
+                image: AssetImage('assets/drawable/web_logo.png'),
+                fit: BoxFit.contain,
+              ),
             ),
           ),
         ],

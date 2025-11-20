@@ -47,79 +47,83 @@ class _AchievementsWidget extends State<AchievementsWidget> {
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(16.0),
-      child:
-          _loading_achievements
-              ? bossBaseLoader()
-              : Column(
-                children:
-                    _achievements.map((achievement) {
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (_) => AchievementsDetail( achievement : achievement),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child:
+            _loading_achievements
+                ? bossBaseLoader()
+                : Expanded(
+                  child: Column(
+                    children:
+                        _achievements.map((achievement) {
+                          return GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => AchievementsDetail( achievement : achievement),
+                                ),
+                              );
+                            },
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(16),
+                              ),
+                              elevation: 4,
+                              margin: const EdgeInsets.only(bottom: 20),
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Column(
+                                  children: [
+                                    // Image
+                                    ClipRRect(
+                                      borderRadius: BorderRadius.circular(12),
+                                      child: Image.network(
+                                        getImageURL(
+                                          "AchievementImages",
+                                          achievement["image"],
+                                        ),
+                                        height: 180,
+                                        width: double.infinity,
+                                        fit: BoxFit.cover,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+
+                                    // Title Text
+                                    Text(
+                                      achievement["title"]!,
+                                      textAlign: TextAlign.center,
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w600,
+                                      ),
+                                    ),
+                                    const SizedBox(height: 12),
+
+                                    // Centered Round Yellow Button
+                                    Center(
+                                      child: Container(
+                                        decoration: const BoxDecoration(
+                                          color: Colors.amber,
+                                          shape: BoxShape.circle,
+                                        ),
+                                        padding: const EdgeInsets.all(12),
+                                        child: const Icon(
+                                          Icons.arrow_forward,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ),
                             ),
                           );
-                        },
-                        child: Card(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          elevation: 4,
-                          margin: const EdgeInsets.only(bottom: 20),
-                          child: Padding(
-                            padding: const EdgeInsets.all(12.0),
-                            child: Column(
-                              children: [
-                                // Image
-                                ClipRRect(
-                                  borderRadius: BorderRadius.circular(12),
-                                  child: Image.network(
-                                    getImageURL(
-                                      "AchievementImages",
-                                      achievement["image"],
-                                    ),
-                                    height: 180,
-                                    width: double.infinity,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-
-                                // Title Text
-                                Text(
-                                  achievement["title"]!,
-                                  textAlign: TextAlign.center,
-                                  style: const TextStyle(
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                ),
-                                const SizedBox(height: 12),
-
-                                // Centered Round Yellow Button
-                                Center(
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                      color: Colors.amber,
-                                      shape: BoxShape.circle,
-                                    ),
-                                    padding: const EdgeInsets.all(12),
-                                    child: const Icon(
-                                      Icons.arrow_forward,
-                                      color: Colors.white,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-              ),
+                        }).toList(),
+                  ),
+                ),
+      ),
     );
   }
 }

@@ -390,39 +390,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                           builder: (_) => const PostPosterPage(),
                         ),
                       );
-
-                      // showDialog(
-                      //   context: context,
-                      //   builder:
-                      //       (context) => AlertDialog(
-                      //         title: const Text('Login Required'),
-                      //         content: const Text(
-                      //           'You need to log in to forward this campaign poster.',
-                      //         ),
-                      //         actions: [
-                      //           TextButton(
-                      //             onPressed:
-                      //                 () => Navigator.pop(
-                      //                   context,
-                      //                 ), // Close the dialog
-                      //             child: const Text('Cancel'),
-                      //           ),
-                      //           TextButton(
-                      //             onPressed: () {
-                      //               Navigator.pop(context); // Close the dialog
-                      //               // Navigate to login page
-                      //               Navigator.push(
-                      //                 context,
-                      //                 MaterialPageRoute(
-                      //                   builder: (_) => const LoginPage(),
-                      //                 ),
-                      //               );
-                      //             },
-                      //             child: const Text('Login'),
-                      //           ),
-                      //         ],
-                      //       ),
-                      // );
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
@@ -466,12 +433,23 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
           ),
 
           // TabBarView content
-          SliverFillRemaining(
+          /*SliverFillRemaining(
             child: TabBarView(
               controller: _tabController,
               children: tabViews, // use widgets here
             ),
+          ),*/
+          // TabBarView content - This makes the content scrollable
+          SliverToBoxAdapter(
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 1.8, // Adjust as needed
+              child: TabBarView(
+                controller: _tabController,
+                children: tabViews,
+              ),
+            ),
           ),
+
         ],
       ),
     );

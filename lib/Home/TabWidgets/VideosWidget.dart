@@ -45,92 +45,94 @@ class _VideosWidgetState extends State<VideosWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.all(12),
       child:
 
           _loading_videos ? bossBaseLoader() :
 
-      GridView.builder(
-        itemCount: _videos.length,
-        shrinkWrap: true,
-        physics: const NeverScrollableScrollPhysics(),
-        gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-          crossAxisCount: 2, // two per row
-          crossAxisSpacing: 10,
-          mainAxisSpacing: 10,
-          childAspectRatio: 0.8,
-        ),
-        itemBuilder: (context, index) {
-          final video = _videos[index];
-          final snippet = video["snippet"];
-          final videoId = video["id"]["videoId"];
-          final title = snippet["title"];
-          final description = snippet["description"];
-          final publishTime = snippet["publishTime"];
-          final thumbnail = snippet["thumbnails"]["medium"]["url"];
-          return GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (_) => VideoPlayerScreen(videoUrl: "https://www.youtube.com/watch?v=$videoId"),
+      SingleChildScrollView(
+        child: GridView.builder(
+          itemCount: _videos.length,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2, // two per row
+            crossAxisSpacing: 10,
+            mainAxisSpacing: 10,
+            childAspectRatio: 0.8,
+          ),
+          itemBuilder: (context, index) {
+            final video = _videos[index];
+            final snippet = video["snippet"];
+            final videoId = video["id"]["videoId"];
+            final title = snippet["title"];
+            final description = snippet["description"];
+            final publishTime = snippet["publishTime"];
+            final thumbnail = snippet["thumbnails"]["medium"]["url"];
+            return GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => VideoPlayerScreen(videoUrl: "https://www.youtube.com/watch?v=$videoId"),
+                  ),
+                );
+              },
+              child: Card(
+                color: Colors.white,
+                elevation: 3,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
                 ),
-              );
-            },
-            child: Card(
-              color: Colors.white,
-              elevation: 3,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Thumbnail image
-                  ClipRRect(
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(12),
-                    ),
-                    child: Image.network(
-                      thumbnail,
-                      height: 120,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-
-                  // Date
-                  Padding(
-                    padding: const EdgeInsets.only(top: 6, left: 8),
-                    child: Text(
-                      publishTime,
-                      style: const TextStyle(
-                        color: Color(0xFFFFD401),
-                        fontSize: 12,
-                        fontWeight: FontWeight.bold,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Thumbnail image
+                    ClipRRect(
+                      borderRadius: const BorderRadius.vertical(
+                        top: Radius.circular(12),
+                      ),
+                      child: Image.network(
+                        thumbnail,
+                        height: 120,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
                       ),
                     ),
-                  ),
 
-                  // Description
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      title,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
+                    // Date
+                    Padding(
+                      padding: const EdgeInsets.only(top: 6, left: 8),
+                      child: Text(
+                        publishTime,
+                        style: const TextStyle(
+                          color: Color(0xFFFFD401),
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+
+                    // Description
+                    Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(
+                        title,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }

@@ -39,82 +39,80 @@ class _NewsRoomWidgetState extends State<NewsRoomWidget> {
 
   @override
   Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(12),
-      child:
-          _loadingNews ? bossBaseLoader() :
-      Column(
-        children: List.generate(_news.length, (index) {
-          final news = _news[index];
-          return Column(
-            children: [
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  vertical: 12,
-                  horizontal: 8,
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+    return _loadingNews ? bossBaseLoader() :
+          SingleChildScrollView(
+            child: Column(
+              children: List.generate(_news.length, (index) {
+                final news = _news[index];
+                return Column(
                   children: [
-                    // Left side: title, date, and read more
-                    Expanded(
-                      flex: 3,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            news["headline"],
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 16,
-                            ),
-                          ),
-                          const SizedBox(height: 6),
-                          Text(
-                            formatLaravelTime(news["date"]),
-                            style: const TextStyle(
-                              color: Colors.grey,
-                              fontSize: 13,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          GestureDetector(
-                            onTap: () {
-                              // TODO: Navigate to details page
-                            },
-                            child: const Text(
-                              "Read more...",
-                              style: TextStyle(
-                                color: Colors.blueAccent,
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                          ),
-                        ],
+                    Container(
+            padding: const EdgeInsets.symmetric(
+              vertical: 12,
+              horizontal: 8,
+            ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Left side: title, date, and read more
+                Expanded(
+                  flex: 3,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        news["headline"],
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-
-                    const SizedBox(width: 10),
-
-                    // Right side: image
-                    ClipRRect(
-                      borderRadius: BorderRadius.circular(8),
-                      child: Image.network(
-                        getImageURL("NewsImages", news["image"]),
-                        width: 100,
-                        height: 80,
-                        fit: BoxFit.cover,
+                      const SizedBox(height: 6),
+                      Text(
+                        formatLaravelTime(news["date"]),
+                        style: const TextStyle(
+                          color: Colors.grey,
+                          fontSize: 13,
+                        ),
                       ),
-                    ),
-                  ],
+                      const SizedBox(height: 8),
+                      GestureDetector(
+                        onTap: () {
+                          // TODO: Navigate to details page
+                        },
+                        child: const Text(
+                          "Read more...",
+                          style: TextStyle(
+                            color: Colors.blueAccent,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
-              ),
-              if (index != _news.length - 1)
-                const Divider(color: Colors.grey, thickness: 0.5),
-            ],
+            
+                const SizedBox(width: 10),
+            
+                // Right side: image
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(8),
+                  child: Image.network(
+                    getImageURL("NewsImages", news["image"]),
+                    width: 100,
+                    height: 80,
+                    fit: BoxFit.cover,
+                  ),
+                ),
+              ],
+            ),
+                    ),
+                    if (index != _news.length - 1)
+            const Divider(color: Colors.grey, thickness: 0.5),
+                  ],
+                );
+              }),
+            ),
           );
-        }),
-      ),
-    );
   }
 }
