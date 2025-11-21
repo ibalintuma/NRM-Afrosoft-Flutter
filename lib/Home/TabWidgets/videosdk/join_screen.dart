@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:nrm_afrosoft_flutter/Utils/Helper.dart';
 import 'api_call.dart';
 import 'meeting_screen.dart';
 import 'dart:convert';
@@ -34,17 +35,13 @@ class _JoinScreenState extends State<JoinScreen> {
           ? _reasonController.text
           : "No reason provided";
 
-      print(">>>>>>>>>>>>>>.......... 0");
-      final url = Uri.parse("https://agent.afrosoftug.com/calls");
+      final url = Uri.parse("https://agent.afrosoftug.com/api/calls");
       final body = {'session_id': meetingId, 'reason': reason, 'person_id': "0"};
       final headers = {'Content-Type': 'application/json'};
 
-      print(body);
 
-      print(">>>>>>>>>>>>>>.......... 1");
       final response = await http.post(url, headers: headers, body: jsonEncode(body));
 
-      print(">>>>>>>>>>>>>>.......... 2");
       if (response.statusCode == 200) {
         Navigator.of(context).push(
           MaterialPageRoute(
@@ -59,6 +56,8 @@ class _JoinScreenState extends State<JoinScreen> {
       } else {
 
         print(">>>>>>>>>>>>>>.......... 4");
+        customLog(response.statusCode);
+        customLog(response.body);
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Failed to create session. Try again.")),
         );

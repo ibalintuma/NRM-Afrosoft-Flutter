@@ -118,7 +118,23 @@ class _PostPageState extends State<PostPage> {
             // Open chat screen
             var a = await Navigator.push(context, MaterialPageRoute(builder: (context) => AddPostPage(post: widget.post)),);
             if (a == true) {
-              getPost();
+              if( widget.post == null) {
+                getPost();
+                //show snackbar
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Post created successfully"),
+                  ),
+                );
+              } else {
+                Navigator.pop(context, true);
+                //show snackbar
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text("Comment added successfully"),
+                  ),
+                );
+              }
             }
           },
           backgroundColor: Colors.black,
@@ -227,6 +243,27 @@ class _PostPageState extends State<PostPage> {
               ),
 
 
+              if( post["reply"] != null && post["reply"]!.isNotEmpty)
+              Container(
+                decoration: BoxDecoration(
+                  color: Color(0xFFFFD401), // border color
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                width: double.infinity,
+                margin: const EdgeInsets.symmetric(horizontal: 12.0, ).copyWith(bottom: 8.0),
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text("Reply From NRM App Support Center", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12),),
+                    SizedBox(height: 2,),
+                    Text("${post["reply"]}", style: TextStyle(fontSize: 13),),
+                  ],
+                ),
+              ),
+
+
+
               // Likes & Comments row
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12.0),
@@ -317,8 +354,11 @@ class _PostPageState extends State<PostPage> {
                       label: const Text("Like"),
                     ),
                     TextButton.icon(
-                      onPressed: () {
-                        Navigator.push(context, MaterialPageRoute(builder: (context) => PostPage( post: post) ) );
+                      onPressed: () async {
+                       var refresh =  await Navigator.push(context, MaterialPageRoute(builder: (context) => PostPage( post: post) ) );
+                       if( refresh == true) {
+                         getPost();
+                       }
                       },
                       icon: const Icon(Icons.comment_outlined, size: 20),
                       label: const Text("Comment"),
