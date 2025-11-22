@@ -70,26 +70,20 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     requestAPI(
       getApiURL("retrieve_campaign_posts.php"),
       {"": ""},
-      (loading) {
+          (loading) {
         setState(() {
           _loadingPosters = loading;
         });
       },
-      (response) {
+          (response) {
         setState(() {
           _posters = response;
         });
       },
-      (error) {},
+          (error) {},
       method: "GET",
     );
   }
-  // bool checkUserLoggedIn() {
-  //   // Example: return true if user token exists
-  //   return SharedPreferences.getInstance().then((prefs) {
-  //     return prefs.containsKey('userToken');
-  //   });
-  // }
 
   @override
   void dispose() {
@@ -102,8 +96,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     return Scaffold(
       floatingActionButton: _buildFabMenu(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-
-      // ✅ Fixed AppBar
       appBar: AppBar(
         backgroundColor: const Color(0xFFFFD401),
         toolbarHeight: 90,
@@ -135,10 +127,6 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
             Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                // IconButton(
-                //   onPressed: () {},
-                //   icon: const Icon(Icons.translate, color: Colors.white),
-                // ),
                 SizedBox(width: 60),
                 IconButton(
                   onPressed: () {
@@ -151,101 +139,220 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                     radius: 16,
                     backgroundImage: AssetImage(
                       'assets/drawable/avatar.png',
-                    ), // replace with your asset
+                    ),
                   ),
                 ),
-                // PopupMenuButton<String>(
-                //   onSelected: (value) {},
-                //   itemBuilder: (BuildContext context) {
-                //     return const [
-                //       PopupMenuItem(
-                //         value: 'Share App',
-                //         child: Text('Share App'),
-                //       ),
-                //       PopupMenuItem(
-                //         value: 'Terms of Use',
-                //         child: Text('Terms of Use'),
-                //       ),
-                //       PopupMenuItem(
-                //         value: 'Privacy Policy',
-                //         child: Text('Privacy Policy'),
-                //       ),
-                //     ];
-                //   },
-                //   icon: const Icon(Icons.more_vert, color: Colors.white),
-                // ),
-
-                // Profile icon
               ],
             ),
           ],
         ),
       ),
-      body: CustomScrollView(
-        slivers: [
-          // Carousel Slider
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: 250,
-              child: Stack(
-                children: [
-                  _loadingSliderImages
-                      ? const Center(child: CircularProgressIndicator())
-                      : CarouselSlider.builder(
-                        itemCount: carouselImages.length,
-                        itemBuilder: (context, index, realIndex) {
-                          final image = carouselImages[index];
-                          return Image.network(
-                            image,
-                            fit: BoxFit.cover,
-                            width: double.infinity,
-                          );
+      body: NestedScrollView(
+        headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) {
+          return <Widget>[
+            // Carousel Slider
+            SliverToBoxAdapter(
+              child: SizedBox(
+                height: 250,
+                child: Stack(
+                  children: [
+                    _loadingSliderImages
+                        ? const Center(child: CircularProgressIndicator())
+                        : CarouselSlider.builder(
+                      itemCount: carouselImages.length,
+                      itemBuilder: (context, index, realIndex) {
+                        final image = carouselImages[index];
+                        return Image.network(
+                          image,
+                          fit: BoxFit.cover,
+                          width: double.infinity,
+                        );
+                      },
+                      options: CarouselOptions(
+                        height: double.infinity,
+                        viewportFraction: 1.0,
+                        autoPlay: true,
+                        onPageChanged: (index, reason) {
+                          setState(() {
+                            activeIndex = index;
+                          });
                         },
-                        options: CarouselOptions(
-                          height: double.infinity,
-                          viewportFraction: 1.0,
-                          autoPlay: true,
-                          onPageChanged: (index, reason) {
-                            setState(() {
-                              activeIndex = index;
-                            });
-                          },
-                        ),
                       ),
-
-                  Positioned(
-                    bottom: 16,
-                    left: 0,
-                    right: 0,
-                    child: Center(
-                      child: AnimatedSmoothIndicator(
-                        activeIndex: activeIndex,
-                        count: carouselImages.length,
-                        effect: const WormEffect(
-                          dotWidth: 8,
-                          dotHeight: 8,
-                          activeDotColor: Colors.yellow,
-                          dotColor: Colors.white54,
+                    ),
+                    Positioned(
+                      bottom: 16,
+                      left: 0,
+                      right: 0,
+                      child: Center(
+                        child: AnimatedSmoothIndicator(
+                          activeIndex: activeIndex,
+                          count: carouselImages.length,
+                          effect: const WormEffect(
+                            dotWidth: 8,
+                            dotHeight: 8,
+                            activeDotColor: Colors.yellow,
+                            dotColor: Colors.white54,
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                  Positioned(
-                    bottom: 16,
-                    right: 16,
-                    child: ElevatedButton(
+                    Positioned(
+                      bottom: 16,
+                      right: 16,
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (_) => const JoinNRMPage(),
+                            ),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.black,
+                          foregroundColor: const Color(0xFFFFD401),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(24),
+                            side: const BorderSide(
+                              color: Color(0xFFFFD401),
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                        child: const Text(
+                          'JOIN NRM',
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
+            // Flag Bearers Section
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Header Row with title, view all, and dropdown
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          "NRM Flag Bearers (${_posters.length})",
+                          style: const TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Row(
+                          children: [
+                            TextButton(
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (_) => const CampaignPostersPage(),
+                                  ),
+                                );
+                              },
+                              child: const Text(
+                                'View All',
+                                style: TextStyle(
+                                  color: Colors.blueAccent,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                _showImages
+                                    ? Icons.arrow_drop_up
+                                    : Icons.arrow_drop_down,
+                                color: Colors.blueAccent,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _showImages = !_showImages;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 12),
+
+                    // ✅ Collapsible horizontal images
+                    if (_showImages)
+                      SizedBox(
+                        height: 100,
+                        child: _loadingPosters
+                            ? const Center(child: CircularProgressIndicator())
+                            : ListView(
+                          padding: EdgeInsets.zero,
+                          scrollDirection: Axis.horizontal,
+                          children: _posters.map<Widget>((poster) {
+                            return GestureDetector(
+                              onTap: () {
+                                String posterUrl = getImageURL(
+                                  "CampaignPosters",
+                                  poster['poster'],
+                                );
+                                showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    content: Image.network(
+                                      posterUrl,
+                                      fit: BoxFit.cover,
+                                    ),
+                                    actions: [
+                                      TextButton(
+                                        onPressed: () =>
+                                            Navigator.pop(context),
+                                        child: const Text('Close'),
+                                      ),
+                                    ],
+                                  ),
+                                );
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Image.network(
+                                    getImageURL(
+                                      "CampaignPosters",
+                                      poster['poster'],
+                                    ),
+                                    width: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                  const SizedBox(width: 8),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      ),
+                    const SizedBox(height: 12),
+
+                    // Forwarding in Campaign Poster button
+                    ElevatedButton(
                       onPressed: () {
-                        // Navigate to Join NRM page
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (_) => const JoinNRMPage(),
+                            builder: (_) => const PostPosterPage(),
                           ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         foregroundColor: const Color(0xFFFFD401),
+                        minimumSize: const Size(double.infinity, 50),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(24),
                           side: const BorderSide(
@@ -255,202 +362,38 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
                         ),
                       ),
                       child: const Text(
-                        'JOIN NRM',
-                        style: TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          // Flag Bearers Section
-          SliverToBoxAdapter(
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header Row with title, view all, and dropdown
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        "NRM Flag Bearers (${_posters.length})",
-                        style: const TextStyle(
-                          fontSize: 18,
+                        'Forwarding in Campaign Poster',
+                        style: TextStyle(
                           fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Row(
-                        children: [
-                          TextButton(
-                            onPressed: () {
-                              // Navigate to full list of flag bearers
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (_) => const CampaignPostersPage(),
-                                ),
-                              );
-                            },
-                            child: const Text(
-                              'View All',
-                              style: TextStyle(
-                                color: Colors.blueAccent,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          IconButton(
-                            icon: Icon(
-                              _showImages
-                                  ? Icons.arrow_drop_up
-                                  : Icons.arrow_drop_down,
-                              color: Colors.blueAccent,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _showImages = !_showImages;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 12),
-
-                  // ✅ Collapsible horizontal images
-                  if (_showImages)
-                    SizedBox(
-                      height: 100, // adjust as needed
-                      child:
-                          _loadingPosters
-                              ? const Center(child: CircularProgressIndicator())
-                              : ListView(
-                                padding: EdgeInsets.zero,
-                                scrollDirection: Axis.horizontal,
-                                children:
-                                    _posters.map<Widget>((poster) {
-                                      return GestureDetector(
-                                        onTap: (){
-                                          //url to opened poster image
-                                          String posterUrl = getImageURL(
-                                            "CampaignPosters",
-                                            poster['poster'],
-                                          );
-                                          // Show the poster in a dialog
-                                          showDialog(
-                                            context: context,
-                                            builder: (context) => AlertDialog(
-                                              content: Image.network(
-                                                posterUrl,
-                                                fit: BoxFit.cover,
-                                              ),
-                                              actions: [
-                                                TextButton(
-                                                  onPressed: () => Navigator.pop(context),
-                                                  child: const Text('Close'),
-                                                ),
-                                              ],
-                                            ),
-                                          );
-                                        },
-                                        child: Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Image.network(
-                                              //'assets/drawable/todwong_small.jpg',
-                                              getImageURL(
-                                                "CampaignPosters",
-                                                poster['poster'],
-                                              ),
-                                              width: 100,
-                                              fit: BoxFit.cover,
-                                            ),
-                                            const SizedBox(width: 8),
-                                          ],
-                                        ),
-                                      );
-                                    }).toList(),
-                              ),
-                    ),
-
-                  const SizedBox(height: 12),
-
-                  // Forwarding in Campaign Poster button
-                  ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => const PostPosterPage(),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: const Color(0xFFFFD401),
-                      minimumSize: const Size(double.infinity, 50),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(24),
-                        side: const BorderSide(
-                          color: Color(0xFFFFD401),
-                          width: 2,
+                          fontSize: 16,
                         ),
                       ),
                     ),
-                    child: const Text(
-                      'Forwarding in Campaign Poster',
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16,
-                      ),
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
 
-          // Sticky TabBar below AppBar
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _SliverAppBarDelegate(
-              TabBar(
-                controller: _tabController,
-                isScrollable: true,
-                labelColor: Color(0xFFFFD401),
-                unselectedLabelColor: Colors.white,
-                indicatorColor: Color(0xFFFFD401),
-
-                tabs: tabLabels.map((label) => Tab(text: label)).toList(),
+            // Sticky TabBar
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _SliverAppBarDelegate(
+                TabBar(
+                  controller: _tabController,
+                  isScrollable: true,
+                  labelColor: Color(0xFFFFD401),
+                  unselectedLabelColor: Colors.white,
+                  indicatorColor: Color(0xFFFFD401),
+                  tabs: tabLabels.map((label) => Tab(text: label)).toList(),
+                ),
               ),
             ),
-          ),
-
-          // TabBarView content
-          /*SliverFillRemaining(
-            child: TabBarView(
-              controller: _tabController,
-              children: tabViews, // use widgets here
-            ),
-          ),*/
-          // TabBarView content - This makes the content scrollable
-          SliverToBoxAdapter(
-            child: SizedBox(
-              height: MediaQuery.of(context).size.height * 1.8, // Adjust as needed
-              child: TabBarView(
-                controller: _tabController,
-                children: tabViews,
-              ),
-            ),
-          ),
-
-        ],
+          ];
+        },
+        body: TabBarView(
+          controller: _tabController,
+          children: tabViews,
+        ),
       ),
     );
   }
@@ -471,13 +414,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(30),
                 side: const BorderSide(
-                  color: Colors.black, // border color
-                  width: 2, // border thickness
+                  color: Colors.black,
+                  width: 2,
                 ),
               ),
               heroTag: 'support_center',
               onPressed: () {
-                // Navigate to Support Center
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => SupportCenter()),
@@ -502,13 +444,12 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
                 side: const BorderSide(
-                  color: Color(0xFFFFD401), // border color
-                  width: 2, // border thickness
+                  color: Color(0xFFFFD401),
+                  width: 2,
                 ),
               ),
               heroTag: 'chat',
               onPressed: () {
-                // Open chat screen
                 Navigator.push(
                   context,
                   MaterialPageRoute(builder: (context) => CommunityPage()),
@@ -536,20 +477,19 @@ class _HomePageState extends State<HomePage> with TickerProviderStateMixin {
     requestAPI(
       getApiURL("api/slide_banners"),
       {"": ""},
-      (loading) {
+          (loading) {
         setState(() {
           _loadingSliderImages = loading;
         });
       },
-      (response) {
-        /*{"data":[{"id":"4","image":"https:\/\/nrm.afrosoftug.com\/banners\/1752491314.jpg","title":null,"created_at":"2025-07-14 11:08:34"},{"id":"11","image":"https:\/\/nrm.afrosoftug.com\/banners\/1755882026.jpg","title":null,"created_at":"2025-08-22 17:00:26"},{"id":"14","image":"https:\/\/nrm.afrosoftug.com\/banners\/1757319742.jpg","title":null,"created_at":"2025-09-08 08:22:22"},{"id":"15","image":"https:\/\/nrm.afrosoftug.com\/banners\/1761978538.jpg","title":null,"created_at":"2025-11-01 06:28:58"},{"id":"16","image":"https:\/\/nrm.afrosoftug.com\/banners\/1762590357.jpg","title":null,"created_at":"2025-11-08 08:25:57"},{"id":"17","image":"https:\/\/nrm.afrosoftug.com\/banners\/1762590430.jpg","title":null,"created_at":"2025-11-08 08:27:10"},{"id":"18","image":"https:\/\/nrm.afrosoftug.com\/banners\/1762590494.jpg","title":null,"created_at":"2025-11-08 08:28:14"},{"id":"19","image":"https:\/\/nrm.afrosoftug.com\/banners\/1762590831.jpg","title":null,"created_at":"2025-11-08 08:33:51"}]}*/
+          (response) {
         setState(() {
           _sliderImages = response["data"];
           carouselImages =
               _sliderImages.map<String>((img) => img['image']).toList();
         });
       },
-      (error) {},
+          (error) {},
       method: "GET",
     );
   }
@@ -569,10 +509,10 @@ class _SliverAppBarDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
+      BuildContext context,
+      double shrinkOffset,
+      bool overlapsContent,
+      ) {
     return Container(color: Colors.black, child: _tabBar);
   }
 
