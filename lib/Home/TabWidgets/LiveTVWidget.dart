@@ -21,7 +21,7 @@ class _LiveTVWidgetState extends State<LiveTVWidget> {
   bool _isDisposed = false;
 
   retrieveData() {
-    requestAPI(getApiURL("get_streaming_data.php"), {"":""}, (loading) {
+    requestAPI(getApiURL("get_streaming_data.php"), {"": ""}, (loading) {
       if (!_isDisposed && mounted) {
         setState(() {
           _loading = loading;
@@ -35,7 +35,8 @@ class _LiveTVWidgetState extends State<LiveTVWidget> {
       if (streaming_data['category_id'] == "1") {
         var sl = streaming_data['streaming_link'];
         if (!sl.startsWith("http")) {
-          sl = "https://www.youtube.com/watch?v=${streaming_data['streaming_link']}";
+          sl =
+          "https://www.youtube.com/watch?v=${streaming_data['streaming_link']}";
         }
         final videoId = YoutubePlayer.convertUrlToId(sl)!;
         _youtubeController = YoutubePlayerController(
@@ -111,11 +112,13 @@ class _LiveTVWidgetState extends State<LiveTVWidget> {
         ],
       ),
       builder: (context, player) {
-        return Column(
-          children: [
-            player,
-            const SizedBox(height: 20),
-          ],
+        return SingleChildScrollView(
+          child: Column(
+            children: [
+              player,
+              const SizedBox(height: 20),
+            ],
+          ),
         );
       },
     );
@@ -130,20 +133,22 @@ class _LiveTVWidgetState extends State<LiveTVWidget> {
       return const Center(child: CircularProgressIndicator());
     }
 
-    return Column(
-      children: [
-        AspectRatio(
-          aspectRatio: _videoController!.value.aspectRatio,
-          child: Stack(
-            alignment: Alignment.bottomCenter,
-            children: [
-              VideoPlayer(_videoController!),
-              _buildVideoControls(),
-            ],
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          AspectRatio(
+            aspectRatio: _videoController!.value.aspectRatio,
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                VideoPlayer(_videoController!),
+                _buildVideoControls(),
+              ],
+            ),
           ),
-        ),
-        const SizedBox(height: 20),
-      ],
+          const SizedBox(height: 20),
+        ],
+      ),
     );
   }
 
@@ -154,7 +159,9 @@ class _LiveTVWidgetState extends State<LiveTVWidget> {
         children: [
           IconButton(
             icon: Icon(
-              _videoController!.value.isPlaying ? Icons.pause : Icons.play_arrow,
+              _videoController!.value.isPlaying
+                  ? Icons.pause
+                  : Icons.play_arrow,
               color: Colors.white,
             ),
             onPressed: () {
